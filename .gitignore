@@ -140,7 +140,6 @@ cython_debug/
 
 # static files generated from Django application using `collectstatic`
 media
-static
 venv
 sqlite.db
 .idea/.gitignore
@@ -151,3 +150,4 @@ sqlite.db
 .idea/modules.xml
 .idea/pyMediaManager.iml
 .idea/vcs.xml
+

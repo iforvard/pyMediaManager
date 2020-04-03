@@ -1,0 +1,10 @@
+/* Custom page CSS
+-------------------------------------------------- */
+.container {
+    width: auto;
+    max-width: 680px;
+    padding: 0 15px;
+}
+.blog {
+    padding: 0 15px;
+}
