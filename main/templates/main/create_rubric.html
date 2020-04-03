@@ -1,0 +1,18 @@
+{% extends 'layout/basic.html' %}
+{% load bootstrap4 %}
+{% block title %} Добавить рубрику {% endblock %}
+{% block content %}
+
+<div class="container mt-3 p-3 mb-2 bg-dark text-white">
+    <div class="row">
+        <div class="col">
+            <h1>Введите название рубрики:</h1>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% bootstrap_form form layout='horizontal' %}
+                {% buttons submit='Сохранить' %}{% endbuttons %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

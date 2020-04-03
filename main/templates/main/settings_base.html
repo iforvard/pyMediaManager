@@ -1,0 +1,104 @@
+{% extends 'layout/basic.html' %}
+{% load bootstrap4 %}
+{% block content %}
+<div class="container mt-3 p-3 mb-2 bg-dark text-white">
+    <div class="mt-3 row">
+        <div class="col">
+            <h6>Здравствуйте, {{ user.username }}</h6>
+        </div>
+    </div>
+    <div class="mt-3 row">
+        <div class="col">
+            <h1>Настройки:</h1>
+        </div>
+    </div>
+    <p>Ваш IP {{ view.get_user_ip }}</p>
+</div>
+<div class="container mt-3 p-3 mb-2 bg-dark text-white">
+    <div class="row">
+        <div class="col">
+            <h4>Основные:</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Просмотр и загрузка "медиа-карточки" других авторов, если разрешен просмотр всем: <b>{{ Settings.use_shared_cards }}</b></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Профиль торрент клиента используемый для загрузки: <b>{{ Settings.t_client }}</b></p>
+        </div>
+    </div>
+    <div class="mt-3 row">
+        <div class="col">
+            <a href="{% url 'main:settings' username=user.username %}" class="btn btn-secondary">Изменить</a>
+        </div>
+    </div>
+</div>
+<div class="container mt-3 p-3 mb-2 bg-dark text-white">
+    <div class="row">
+        <div class="col">
+            <h4>Подключенные плагины торрент-трекеров:</h4>
+        </div>
+    </div>
+
+    {% for TorrentTracker in TorrentTrackers %}
+    <div class="mt-3 row">
+        <div class="col">
+            <a href="{% url 'main:upd_torrent_tracker' name=TorrentTracker.name %}" class="btn btn-secondary">{{ TorrentTracker.name }} - {{ TorrentTracker.login }}</a>
+        </div>
+    </div>
+    {% empty %}
+        Подключенные плагины торрент-трекеров отсутствуют.
+    {% endfor %}
+    <div class="mt-3 row">
+        <div class="col">
+            <a href="{% url 'main:add_torrent_tracker' %}" class="btn btn-outline-success">Добавить торрент-трекер</a>
+        </div>
+    </div>
+</div>
+<div class="container mt-3 p-3 mb-2 bg-dark text-white">
+    <div class="row">
+        <div class="col">
+            <h4>Подключенные плагины торрент-клиентов:</h4>
+        </div>
+    </div>
+
+    {% for TorrentClient in TorrentClients %}
+    <div class="mt-3 row">
+        <div class="col">
+            <a href="{% url 'main:upd_torrent_client' name=TorrentClient.name %}" class="btn btn-secondary">{{ TorrentClient.name }} - {{ TorrentClient.login }}</a>
+        </div>
+    </div>
+    {% empty %}
+        Подключенные плагины торрент-клиентов отсутствуют.
+    {% endfor %}
+    <div class="mt-3 row">
+        <div class="col">
+            <a href="{% url 'main:add_torrent_client' %}" class="btn btn-outline-success">Добавить торрент-клиент</a>
+        </div>
+    </div>
+</div>
+<div class="container mt-3 p-3 mb-2 bg-dark text-white">
+    <div class="mt-3 row">
+        <div class="col">
+            <a href="{% url 'main:add_rubric' %}" class="btn btn-secondary">Добавить новую рубрику</a>
+        </div>
+    </div>
+    <div class="mt-3 row">
+        <div class="col">
+            <h4>Список созданных рубрик:</h4>
+        </div>
+    </div>
+    {% for rubric in Rubrics %}
+    <div class="mt-3 row">
+        <div class="col">
+            {{ rubric.name }} / <a href="{% url 'main:rubric_update' pk=rubric.pk %}"> ред.</a> / <a href="{% url 'main:rubric_delete' pk=rubric.pk %}"> удалить</a>
+        </div>
+    </div>
+    {% empty %}
+        Рубрики отсутствуют.
+    {% endfor %}
+</div>
+{% endblock %}

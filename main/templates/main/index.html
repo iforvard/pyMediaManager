@@ -1,0 +1,94 @@
+{% extends 'layout/basic.html' %}
+{% load static %}
+{% block title %} Главная {% endblock %}
+{% block content %}
+<script>
+    var t;
+function up() {
+	var top = Math.max(document.body.scrollTop,document.documentElement.scrollTop);
+	if(top > 0) {
+		window.scrollBy(0,-100);
+		t = setTimeout('up()',20);
+	} else clearTimeout(t);
+	return false;
+}
+</script>
+{% for m_card in MediaCards %}
+<div class="container mt-3 p-3 mb-2 bg-dark text-white">
+    <div class="row">
+        <div class="col">
+            <a href="{% url 'main:detail' pk=m_card.pk %}" class="btn btn-secondary float-left">{{ m_card.rubric }}</a>
+        </div>
+        <div class="col">
+            <a href="{% url 'main:delete' pk=m_card.pk %}" class="btn btn-secondary float-right">&times;</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="mt-3 text-center">
+                <h3><a class="text-white bg-dark" href="{% url 'main:detail' pk=m_card.pk %}">
+                    {% if m_card.use_short_name %}
+                    {{ m_card.short_name }}
+                    {% else %}
+                    {{ m_card.full_name }}
+                    {% endif %}
+                </a></h3>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a href="{% url 'main:detail' pk=m_card.pk %}">
+                <img src="{{ m_card.img_url }}" class="mt-3 rounded mx-auto d-block"
+                     style="width:300px"></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="mt-3 mx-auto" style="width: 300px">
+                <p><a class="text-white bg-dark" href="{{ m_card.url }}">Последнее обновление:<br>{{ m_card.date_upd }}</a></p>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <a href="#top" class="btn btn-secondary float-left" onclick="return up()"> &uarr; </a>
+        </div>
+        <div class="col">
+            <a href="#top" class="btn btn-secondary float-right" onclick="return up()"> &uarr; </a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<div class="row float-right">
+    <div class="col">
+        <form class="input_pag" action="{% url 'main:index' %}" method="get">
+            <input type="text" name="paginate_by" list="pagination_nums">
+            <datalist id="pagination_nums">
+                <option value="5">
+                <option value="10">
+                <option value="15">
+                <option value="25">
+                <option value="50">
+                <option value="100">
+            </datalist>
+        </form>
+    </div>
+
+    <div class="col">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+        <a id="paginLeft" href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+        {% endif %}
+
+        <span class="current">
+        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+        <a id="paginRight" href="?page={{ page_obj.next_page_number }}">&gt;</a>
+        {% endif %}
+    </span>
+    </div>
+    </div>
+{% endblock %}

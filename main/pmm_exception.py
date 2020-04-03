@@ -1,0 +1,2 @@
+class NotTorrentClient(Exception):
+    pass

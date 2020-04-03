@@ -1,0 +1,15 @@
+{% extends 'layout/basic.html' %}
+{% load bootstrap4 %}
+{% block content %}
+<div class="container mt-3 p-3 mb-2 bg-dark text-white">
+    <div class="row">
+        <div class="col">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% bootstrap_form form layout='horizontal' %}
+                {% bootstrap_button "Сохранить" button_type="submit" button_class="btn btn-outline-success" %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
