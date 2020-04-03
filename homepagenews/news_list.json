@@ -1,0 +1,13 @@
+{
+    "news_list": [
+        {
+            "head": "Welcome!",
+            "body": "Добро пожаловать, здесь будут публиковаться важные новости по проекту!"
+        },
+        {
+            "head": "Установка pyMediaManager на Heroku",
+            "body": "Опубликована инструкция по <a href=\"https://github.com/iforvard/pyMediaManager#%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-pymediamanager-%D0%BD%D0%B0-heroku\">установки pyMediaManager на Heroku</a>"
+        }
+    ],
+    "main_head": "<br><p><b>pyMediaManager</b> - менеджер торрент клиентов и трекеров.\n        Django-приложение(web-сайт) написанное на python. pyMediaManager позволяет отслеживать темы на rutracker.org* и\n        загружать** обновленные торренты через api qbittorrent и uTorrent.\n        В pyMediaManager есть возможность проверки и загрузки как вручную(через веб-сайт) так и автоматически с любым\n        интервалом, см. cron-файл clock.py</p>\n\n    *в pyMediaManager реализована система плагинов, что дает возможность дополнить список как торрент трекеров для\n    проверки так и торрент клиентов для загрузки.\n    <br>** Загрузка и проверка реализована через асинхронную библиотеку aiohttp, что позволяет практически мгновенно\n    проверять и загружать большое количество страниц с торрентами и торрент-файлов.\n\n    Проверить работу можете на https://pymediamanager.herokuapp.com:\n    логин - demo-user пароль - demo-password"
+}
