@@ -7,9 +7,9 @@ sched = BlockingScheduler()
 @sched.scheduled_job('interval', days=1)
 def timed_job():
     # iforvard - нужно заменить на логин пользователя в системе,
-    # если после проверки обновлений нужна загрузка нужно добавить -dw.
+    # Если после проверки обновлений требуется загрузка нужно добавить -dw.
     bashCommand = "python3 manage.py check_torrents iforvard"
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     print(f'Выполненна команда {bashCommand}')
 
 

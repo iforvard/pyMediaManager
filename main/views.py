@@ -14,7 +14,18 @@ from django.views.generic.list import ListView
 from homepagenews.homepagenews_editor import get_news_list_github
 from .models import MediaCard, Rubric, Settings, TorrentClient, TorrentTracker
 from .plugin_manager import dpt, get_m_cards_to_urls, dw_torrent_aio
+from requests import ConnectionError
 from .pmm_exception import *
+
+
+def message_or_print(request, commands, text, type_message=None):
+    if commands:
+        print(text)
+    else:
+        messages.add_message(
+            request, type_message,
+            text,
+        )
 
 
 def get_torrent_client_params(name, user):
@@ -51,7 +62,7 @@ def download_torrents(request):
 
     m_cards, settings = get_m_card_set(request, get_settings=True)
     if not settings.t_client:
-        raise NotTorrentClient('Не выбран торрент клинет в настройках')
+        return False
     else:
         host, login, pwd = get_torrent_client_params(settings.t_client, request.user)
     m_cards = m_cards.filter(is_new_data=True)
@@ -62,14 +73,17 @@ def download_torrents(request):
             tasks[m_card.torrent_url] = m_card_cookies
         else:
             magnet_urls.append(m_card.magnet_url)
-    dw_torrent_aio(
-        magnet_urls=magnet_urls,
-        tasks=tasks,
-        plugin_client=str(settings.t_client),
-        host=host,
-        login=login,
-        password=pwd,
-    )
+    try:
+        dw_torrent_aio(
+            magnet_urls=magnet_urls,
+            tasks=tasks,
+            plugin_client=str(settings.t_client),
+            host=host,
+            login=login,
+            password=pwd,
+        )
+    except ConnectionError:
+        return False
     return m_cards
 
 
@@ -102,31 +116,37 @@ def check_m_cards(request, key):
                 m_card.save()
 
     elif key == 'download':
-        try:
-            m_cards = download_torrents(request)
-            try:
-                request.commands
-            except Exception:
-                messages.add_message(request, messages.SUCCESS,
-                                     'Все торрент-файлы успешно отправленны в торрент-клиент')
+        commands = request.GET.get('commands', False)
+        m_cards = download_torrents(request)
+        if m_cards:
+            message_or_print(
+                request,
+                commands,
+                'Все торрент-файлы успешно отправленны в торрент-клиент',
+                messages.SUCCESS
+            )
             for m_card in m_cards:
                 if m_card.author == request.user:
                     m_card.is_new_data = False
                     m_card.save()
                 else:
-                    try:
-                        request.commands
-                    except Exception:
-                        messages.add_message(
-                            request, messages.SUCCESS,
-                            f'{m_card.short_name} - остается в списке т.к создана другим автором: {m_card.author}',
-                        )
-        except Exception:
-            messages.add_message(
-                request, messages.ERROR,
-                'Ошибка загрузки! Не удалось продключиться торрент-клиенту либо в  настройках указан не верный профиль.'
+                    message_or_print(
+                        request,
+                        commands,
+                        f'{m_card.short_name} - остается в списке т.к создана другим автором: {m_card.author}',
+                        messages.SUCCESS)
+        else:
+            message_or_print(
+                request,
+                commands,
+                'Ошибка загрузки! Не удалось продключиться торрент-клиенту либо в настройках указан не верный профиль.',
+                messages.ERROR
             )
-
+    elif key == 'skip':
+        for m_card in data:
+            if m_card.author == request.user:
+                m_card.is_new_data = False
+                m_card.save()
     context = {'data': data, 'key': key, 'check': True}
     return render(request, 'main/check.html', context)
 

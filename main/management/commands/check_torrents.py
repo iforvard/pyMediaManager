@@ -5,7 +5,7 @@ from main.views import check_m_cards
 
 
 class Command(BaseCommand):
-    help = 'Провенить обновления медиа-карточек'
+    help = 'Проверить обновления медиа-карточек'
 
     def handle(self, *args, **options):
         request = RequestFactory().get('/')
@@ -17,10 +17,15 @@ class Command(BaseCommand):
                 return f'USER "{options["user"]}" - НЕ НАЙДЕН!'
         else:
             return 'Нужно указать USER'
-        request.commands = True
-        response = check_m_cards(request, 'check')
+
+        if not request.GET._mutable:
+            request.GET._mutable = True
+        request.GET['commands'] = True
+        request.GET._mutable = False
+
+        check_m_cards(request, 'check')
         if options['download']:
-            response = check_m_cards(request, 'download')
+            check_m_cards(request, 'download')
 
     def add_arguments(self, parser):
         parser.add_argument(
