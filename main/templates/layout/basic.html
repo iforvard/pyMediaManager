@@ -27,19 +27,16 @@
                 <a class="nav-link" href="{% url 'main:check' key='reed' %}"><i class="fas fa-sync-alt"></i> Обновления</a>
             </li>
             <li class="nav-item {% if settings %} active {% endif %}">
-                <a class="nav-link" href="{% url 'main:profile' username=user.username %}">Настройки</a>
+                <a class="nav-link" href="{% url 'main:profile' username=user.username %}"><i class="fas fa-sliders-h"></i> Настройки</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:index' %}">Админка</a>
+                <a class="nav-link" href="{% url 'admin:index' %}"><i class="fas fa-user-cog"></i> Admin Panel</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'main:homepage' %}">Home page</a>
+                <a class="nav-link" href="{% url 'main:homepage' %}"><i class="fas fa-rss-square"></i> Blog</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'account_logout' %}">Выход [ {{ user.username }} ]</a>
+                <a class="nav-link" href="{% url 'account_logout' %}">{{ user.username }} [Выход]</a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0" action="">
