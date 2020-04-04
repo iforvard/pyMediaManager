@@ -23,23 +23,14 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="{% url 'admin:index' %}">Админка<span class="sr-only">(current)</span></a>
+            <li class="nav-item {% if check %} active {% endif %}">
+                <a class="nav-link" href="{% url 'main:check' key='reed' %}"><i class="fas fa-sync-alt"></i> Обновления</a>
             </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="{% url 'main:profile' username=user.username %}">Настройки<span class="sr-only">(current)</span></a>
+            <li class="nav-item {% if settings %} active {% endif %}">
+                <a class="nav-link" href="{% url 'main:profile' username=user.username %}">Настройки</a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">Обновления </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Выберете действие:</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'main:check' key='reed' %}">Показать обновленные карточки</a>
-                    <a class="dropdown-item" href="{% url 'main:check' key='download' %}">Загрузить обновленные карточки</a>
-                    <a class="dropdown-item" href="{% url 'main:check' key='check' %}">Проверить обновления</a>
-
-                </div>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin:index' %}">Админка</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'main:homepage' %}">Home page</a>

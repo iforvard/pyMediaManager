@@ -127,7 +127,7 @@ def check_m_cards(request, key):
                 'Ошибка загрузки! Не удалось продключиться торрент-клиенту либо в  настройках указан не верный профиль.'
             )
 
-    context = {'data': data, 'key': key}
+    context = {'data': data, 'key': key, 'check': True}
     return render(request, 'main/check.html', context)
 
 
@@ -216,6 +216,7 @@ class ProfileSettingsView(ListView):
         context['TorrentTrackers'] = TorrentTracker.objects.filter(user=self.request.user)
         context['TorrentClients'] = TorrentClient.objects.filter(user=self.request.user)
         context['Rubrics'] = Rubric.objects.all()
+        context['settings'] = True
         return context
 
     def get_user_ip(self):
