@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from .views import IndexMediaCardView, add_torrent, MediaCardDetailView, MediaCardUpdateView, \
     MediaCardDeleteView, check_m_cards, RubricCreateView, SettingsUpdateView, \

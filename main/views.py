@@ -10,12 +10,11 @@ from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
+from requests import ConnectionError
 
 from homepagenews.homepagenews_editor import get_news_list_github
 from .models import MediaCard, Rubric, Settings, TorrentClient, TorrentTracker
 from .plugin_manager import dpt, get_m_cards_to_urls, dw_torrent_aio
-from requests import ConnectionError
-from .pmm_exception import *
 
 
 def message_or_print(request, commands, text, type_message=None):
@@ -53,6 +52,19 @@ def get_m_card_set(request, get_settings=False):
     if get_settings:
         return m_card, settings
     return m_card
+
+
+def uncheck_new_data_m_card(m_cards, request, commands):
+    for m_card in m_cards:
+        if m_card.author == request.user:
+            m_card.is_new_data = False
+            m_card.save()
+        else:
+            message_or_print(
+                request,
+                commands,
+                f'{m_card.short_name} - остается в списке т.к создана другим автором: {m_card.author}',
+                messages.SUCCESS)
 
 
 # @timeout(10)
@@ -99,14 +111,15 @@ def home_page(request):
 
 
 @login_required
-def check_m_cards(request, key):
-    data, settings = get_m_card_set(request, get_settings=True)
+def check_m_cards(request, key, n=False):
+    m_cards, settings = get_m_card_set(request, get_settings=True)
+    commands = request.GET.get('commands', False)
     if key == 'check':
-        torrents = [m_card.url for m_card in data]
+        torrents = [m_card.url for m_card in m_cards]
         cookies = get_cookies(request.user)
         upd_m_cards = get_m_cards_to_urls(torrents, cookies)
 
-        for m_card in data:
+        for m_card in m_cards:
             if upd_m_cards[m_card.url]['date_upd'] > m_card.date_upd:
                 m_card.date_upd = upd_m_cards[m_card.url]['date_upd']
                 m_card.full_name = upd_m_cards[m_card.url]['full_name']
@@ -116,7 +129,6 @@ def check_m_cards(request, key):
                 m_card.save()
 
     elif key == 'download':
-        commands = request.GET.get('commands', False)
         m_cards = download_torrents(request)
         if m_cards:
             message_or_print(
@@ -125,16 +137,7 @@ def check_m_cards(request, key):
                 'Все торрент-файлы успешно отправленны в торрент-клиент',
                 messages.SUCCESS
             )
-            for m_card in m_cards:
-                if m_card.author == request.user:
-                    m_card.is_new_data = False
-                    m_card.save()
-                else:
-                    message_or_print(
-                        request,
-                        commands,
-                        f'{m_card.short_name} - остается в списке т.к создана другим автором: {m_card.author}',
-                        messages.SUCCESS)
+            uncheck_new_data_m_card(m_cards, request, commands)
         else:
             message_or_print(
                 request,
@@ -143,11 +146,9 @@ def check_m_cards(request, key):
                 messages.ERROR
             )
     elif key == 'skip':
-        for m_card in data:
-            if m_card.author == request.user:
-                m_card.is_new_data = False
-                m_card.save()
-    context = {'data': data, 'key': key, 'check': True}
+        uncheck_new_data_m_card(m_cards, request, commands)
+
+    context = {'data': m_cards, 'key': key, 'check': True}
     return render(request, 'main/check.html', context)
 
 
