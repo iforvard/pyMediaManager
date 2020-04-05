@@ -37,7 +37,7 @@
     </div>
     <div class="mt-3 row">
         <div class="col">
-            <a href="{% url 'main:settings' username=user.username %}" class="btn btn-secondary">Изменить</a>
+            <a href="{% url 'main:settings' username=user.username %}" class="btn btn-secondary btn-lg btn-block">Изменить</a>
         </div>
     </div>
 </div>
@@ -51,7 +51,7 @@
     {% for TorrentTracker in TorrentTrackers %}
     <div class="mt-3 row">
         <div class="col">
-            <a href="{% url 'main:upd_torrent_tracker' name=TorrentTracker.name %}" class="btn btn-secondary">{{ TorrentTracker.name }} - {{ TorrentTracker.login }}</a>
+            <a href="{% url 'main:upd_torrent_tracker' name=TorrentTracker.name %}" class="btn btn-secondary btn-lg btn-block">{{ TorrentTracker.name }} - {{ TorrentTracker.login }}</a>
         </div>
     </div>
     {% empty %}
@@ -59,7 +59,7 @@
     {% endfor %}
     <div class="mt-3 row">
         <div class="col">
-            <a href="{% url 'main:add_torrent_tracker' %}" class="btn btn-outline-success">Добавить торрент-трекер</a>
+            <a href="{% url 'main:add_torrent_tracker' %}" class="btn btn-outline-success btn-lg btn-block">Добавить торрент-трекер</a>
         </div>
     </div>
 </div>
@@ -73,7 +73,7 @@
     {% for TorrentClient in TorrentClients %}
     <div class="mt-3 row">
         <div class="col">
-            <a href="{% url 'main:upd_torrent_client' name=TorrentClient.name %}" class="btn btn-secondary">{{ TorrentClient.name }} - {{ TorrentClient.login }}</a>
+            <a href="{% url 'main:upd_torrent_client' name=TorrentClient.name %}" class="btn btn-secondary btn-lg btn-block">{{ TorrentClient.name }} - {{ TorrentClient.login }}</a>
         </div>
     </div>
     {% empty %}
@@ -81,14 +81,14 @@
     {% endfor %}
     <div class="mt-3 row">
         <div class="col">
-            <a href="{% url 'main:add_torrent_client' %}" class="btn btn-outline-success">Добавить торрент-клиент</a>
+            <a href="{% url 'main:add_torrent_client' %}" class="btn btn-outline-success btn-lg btn-block">Добавить торрент-клиент</a>
         </div>
     </div>
 </div>
 <div class="container mt-3 p-3 mb-2 bg-dark text-white">
     <div class="mt-3 row">
         <div class="col">
-            <a href="{% url 'main:add_rubric' %}" class="btn btn-secondary">Добавить новую рубрику</a>
+            <a href="{% url 'main:add_rubric' %}" class="btn btn-secondary btn-lg btn-block">Добавить новую рубрику</a>
         </div>
     </div>
     <div class="mt-3 row">
@@ -114,10 +114,10 @@
     </div>
     <div class="mt-3 row">
         <div class="col">
-            <button type="button" class="btn btn-secondary mt-1">
+            <button type="button" class="btn btn-secondary  btn-lg btn-block mt-1">
                 <i class="fas fa-power-off"></i> Импорт
             </button>
-            <button type="button" class="btn btn-secondary mt-1">
+            <button type="button" class="btn btn-secondary  btn-lg btn-block mt-1">
                 <i class="fas fa-power-off"></i> Экспорт
             </button>
         </div>
