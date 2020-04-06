@@ -4,99 +4,18 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
-from requests import ConnectionError
+from django import forms
 
 from homepagenews.homepagenews_editor import get_news_list_github
 from .models import MediaCard, Rubric, Settings, TorrentClient, TorrentTracker
-from .plugin_manager import dpt, get_m_cards_to_urls, dw_torrent_aio
-
-
-def message_or_print(request, commands, text, type_message=None):
-    if commands:
-        print(text)
-    else:
-        messages.add_message(
-            request, type_message,
-            text,
-        )
-
-
-def get_torrent_client_params(name, user):
-    client = TorrentClient.objects.get(name=name, user=user)
-    return f'{client.host}:{client.port}', client.login, client.password
-
-
-def get_cookies(user):
-    cookies_plugin = {}
-    cookies = TorrentTracker.objects.filter(user=user)
-    for cookie in cookies:
-        cookies_plugin[cookie.name] = json.loads(cookie.session)
-    return cookies_plugin
-
-
-def get_m_card_set(request, get_settings=False):
-    ordering = '-date_upd'
-    settings = Settings.objects.get(user=request.user)
-    criterion1 = Q(author=request.user)
-    if settings.use_shared_cards:
-        criterion2 = Q(is_view=True)
-        m_card = MediaCard.objects.order_by(ordering).filter(criterion1 | criterion2)
-    else:
-        m_card = MediaCard.objects.order_by(ordering).filter(criterion1)
-    if get_settings:
-        return m_card, settings
-    return m_card
-
-
-def uncheck_new_data_m_card(m_cards, request, commands):
-    for m_card in m_cards:
-        if m_card.author == request.user:
-            m_card.is_new_data = False
-            m_card.save()
-        else:
-            message_or_print(
-                request,
-                commands,
-                f'{m_card.short_name} - остается в списке т.к создана другим автором: {m_card.author}',
-                messages.SUCCESS)
-
-
-# @timeout(10)
-def download_torrents(request):
-    tasks = {}
-    magnet_urls = []
-
-    m_cards, settings = get_m_card_set(request, get_settings=True)
-    if not settings.t_client:
-        return False
-    else:
-        host, login, pwd = get_torrent_client_params(settings.t_client, request.user)
-    m_cards = m_cards.filter(is_new_data=True)
-    cookies = get_cookies(request.user)
-    for m_card in m_cards:
-        m_card_cookies = cookies.get(m_card.plugin_name)
-        if m_card_cookies:
-            tasks[m_card.torrent_url] = m_card_cookies
-        else:
-            magnet_urls.append(m_card.magnet_url)
-    try:
-        dw_torrent_aio(
-            magnet_urls=magnet_urls,
-            tasks=tasks,
-            plugin_client=str(settings.t_client),
-            host=host,
-            login=login,
-            password=pwd,
-        )
-    except ConnectionError:
-        return False
-    return m_cards
+from .plugin_manager import dpt, get_m_cards_to_urls
+from .utils.view_utils import message_or_print, download_torrents, get_cookies, uncheck_new_data_m_card, \
+    get_m_card_set
 
 
 def home_page(request):
@@ -111,7 +30,47 @@ def home_page(request):
 
 
 @login_required
-def check_m_cards(request, key, n=False):
+def skip_m_cards(request, id_m_card):
+    m_cards = get_m_card_set(request)
+
+    if id_m_card.isdigit():
+        skip_m_cards = m_cards.filter(id=id_m_card)
+        uncheck_new_data_m_card(skip_m_cards, request, commands=False)
+    elif id_m_card == 'all':
+        uncheck_new_data_m_card(m_cards, request, commands=False)
+
+    context = {'data': m_cards, 'check': True}
+    return render(request, 'main/check.html', context)
+
+
+@login_required
+def download_m_cards(request, id_m_card=None):
+    commands = request.GET.get('commands', False)
+    m_cards = download_torrents(request, id_m_card)
+
+    if m_cards:
+        message_or_print(
+            request,
+            commands,
+            'Торрент-файл(ы) успешно отправлен(ы) в торрент-клиент',
+            messages.SUCCESS
+        )
+        if id_m_card.isdigit():
+            uncheck_new_data_m_card(m_cards.filter(pk=id_m_card), request, commands)
+        else:
+            uncheck_new_data_m_card(m_cards, request, commands)
+    else:
+        message_or_print(
+            request,
+            commands,
+            'Ошибка загрузки! Не удалось подключиться торрент-клиенту либо в настройках указан не верный профиль.',
+            messages.ERROR
+        )
+    context = {'data': m_cards, 'check': True}
+    return render(request, 'main/check.html', context)
+
+@login_required
+def check_m_cards(request, key):
     m_cards, settings = get_m_card_set(request, get_settings=True)
     commands = request.GET.get('commands', False)
     if key == 'check':
@@ -127,26 +86,6 @@ def check_m_cards(request, key, n=False):
                 m_card.size = upd_m_cards[m_card.url]['size']
                 m_card.is_new_data = True
                 m_card.save()
-
-    elif key == 'download':
-        m_cards = download_torrents(request)
-        if m_cards:
-            message_or_print(
-                request,
-                commands,
-                'Все торрент-файлы успешно отправленны в торрент-клиент',
-                messages.SUCCESS
-            )
-            uncheck_new_data_m_card(m_cards, request, commands)
-        else:
-            message_or_print(
-                request,
-                commands,
-                'Ошибка загрузки! Не удалось продключиться торрент-клиенту либо в настройках указан не верный профиль.',
-                messages.ERROR
-            )
-    elif key == 'skip':
-        uncheck_new_data_m_card(m_cards, request, commands)
 
     context = {'data': m_cards, 'key': key, 'check': True}
     return render(request, 'main/check.html', context)
@@ -173,7 +112,7 @@ def add_torrent(request):
         return redirect('main:detail', pk=media_card.pk)
     messages.add_message(
         request, messages.ERROR,
-        f'Плагины {", ".join([plugin for plugin in dpt])} не смогли распознать ссылку'
+        f'Плагины не смогли распознать ссылку. Список подключенных плагинов: {", ".join([plugin for plugin in dpt])}'
     )
     return redirect('main:index')
 
@@ -330,6 +269,11 @@ class TorrentTrackerUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateVi
     slug_url_kwarg = 'name'
     success_message = 'Изменения сохранены'
 
+    def get_form(self, form_class=None):
+        form = super(TorrentTrackerUpdateView, self).get_form(form_class)
+        form.fields['password'].widget = forms.PasswordInput()
+        return form
+
     def get_queryset(self):
         return TorrentTracker.objects.filter(user=self.request.user)
 
@@ -363,6 +307,11 @@ class TorrentClientUpdateView(UserPassesTestMixin, SuccessMessageMixin, UpdateVi
     slug_url_kwarg = 'name'
     success_message = 'Изменения сохранены'
 
+    def get_form(self, form_class=None):
+        form = super(TorrentClientUpdateView, self).get_form(form_class)
+        form.fields['password'].widget = forms.PasswordInput()
+        return form
+
     def get_queryset(self):
         return TorrentClient.objects.filter(user=self.request.user)
 
@@ -377,6 +326,11 @@ class TorrentTrackerCreateView(LoginRequiredMixin, CreateView):
     template_name = 'main/create_torrent_tracker.html'
     fields = ('name', 'login', 'password')
     model = TorrentTracker
+
+    def get_form(self, form_class=None):
+        form = super(TorrentTrackerCreateView, self).get_form(form_class)
+        form.fields['password'].widget = forms.PasswordInput()
+        return form
 
     def form_valid(self, form):
         obj = form.save(commit=False)
@@ -417,6 +371,11 @@ class TorrentClientCreateView(LoginRequiredMixin, CreateView):
             f'Профиль для Торрент-клиента - "{obj.name}" успешно добавлен.'
         )
         return redirect('main:profile', username=self.request.user)
+
+    def get_form(self, form_class=None):
+        form = super(TorrentClientCreateView, self).get_form(form_class)
+        form.fields['password'].widget = forms.PasswordInput()
+        return form
 
 # TO-DO proxy-torrent-download
 # def get_torrent_file(request, torrent_id):

@@ -7,13 +7,13 @@
       <th scope="col">Название медиа карточки</th>
       <th scope="col">Дата обновления</th>
       <th scope="col">
-        <a href="{% url 'main:check' key='download' %}" class="btn btn-outline-success mt-1" data-toggle="tooltip" data-placement="top" title="Загрузить все медиа-карточки">
+        <a href="{% url 'main:download_m_cards' id_m_card='all' %}" class="btn btn-outline-success mt-1" data-toggle="tooltip" data-placement="top" title="Загрузить все медиа-карточки">
           <i class="fas fa-arrow-circle-down"></i>
         </a>
         <a href="{% url 'main:check' key='check' %}" class="btn btn-outline-success mt-1" data-toggle="tooltip" data-placement="top" title="Обновить все медиа-карточки">
           <i class="fas fa-sync-alt"></i>
         </a>
-        <a href="{% url 'main:check' key='skip' %}" class="btn btn-outline-success mt-1" data-toggle="tooltip" data-placement="top" title="Отметить все медиа-карточки как загруженные">
+        <a href="{% url 'main:skip_m_cards' id_m_card='all' %}" class="btn btn-outline-success mt-1" data-toggle="tooltip" data-placement="top" title="Отметить все медиа-карточки как загруженные">
           <i class="fas fa-power-off"></i>
         </a>
       </th>
@@ -26,15 +26,12 @@
       <td><a class="text-white bg-dark" href="{% url 'main:detail' pk=m_card.pk %}">{{ m_card.short_name }}</a></td>
       <td>{{ m_card.date_upd }}</td>
       <td>
-        <button type="button" class="btn btn-secondary mt-1">
+        <a href="{% url 'main:download_m_cards' id_m_card=m_card.pk %}" class="btn btn-secondary mt-1">
           <i class="fas fa-arrow-circle-down"></i>
-        </button>
-        <button type="button" class="btn btn-secondary mt-1">
-          <i class="fas fa-sync-alt"></i>
-        </button>
-        <button type="button" class="btn btn-secondary mt-1">
-           <i class="fas fa-power-off"></i>
-        </button>
+        </a>
+        <a href="{% url 'main:skip_m_cards' id_m_card=m_card.pk %}" class="btn btn-secondary mt-1">
+          <i class="fas fa-power-off"></i>
+        </a>
       </td>
     </tr>
     {% endif %}

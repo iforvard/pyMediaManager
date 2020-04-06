@@ -1,9 +1,9 @@
-from django.urls import path, re_path
+from django.urls import path
 
 from .views import IndexMediaCardView, add_torrent, MediaCardDetailView, MediaCardUpdateView, \
     MediaCardDeleteView, check_m_cards, RubricCreateView, SettingsUpdateView, \
     TorrentClientCreateView, TorrentTrackerCreateView, ProfileSettingsView, TorrentTrackerUpdateView, \
-    TorrentClientUpdateView, RubricUpdateView, RubricDeleteView, home_page
+    TorrentClientUpdateView, RubricUpdateView, RubricDeleteView, home_page, skip_m_cards, download_m_cards
 
 app_name = 'main'
 urlpatterns = [
@@ -23,5 +23,7 @@ urlpatterns = [
     # path('dw/<str:torrent_id>/', get_torrent_file, name='dw'),
     path('check/<str:key>/', check_m_cards, name='check'),
     path('homepage/', home_page, name='homepage'),
+    path('skip_m_cards/<str:id_m_card>', skip_m_cards, name='skip_m_cards'),
+    path('download_m_cards/<str:id_m_card>', download_m_cards, name='download_m_cards'),
     path('', IndexMediaCardView.as_view(), name='index'),
 ]
