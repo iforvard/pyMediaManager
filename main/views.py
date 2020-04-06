@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
@@ -300,7 +300,7 @@ class RubricCreateView(LoginRequiredMixin, CreateView):
     fields = ('name',)
 
     def get_success_url(self, **kwargs):
-        return reverse_lazy("main:profile", args=(self.request.user,))
+        return f'{reverse("main:profile", args=(self.request.user,))}#rubrics'
 
 
 class RubricUpdateView(LoginRequiredMixin, UpdateView):
@@ -309,7 +309,7 @@ class RubricUpdateView(LoginRequiredMixin, UpdateView):
     fields = ('name',)
 
     def get_success_url(self, **kwargs):
-        return reverse_lazy("main:profile", args=(self.request.user,))
+        return f'{reverse("main:profile", args=(self.request.user,))}#rubrics'
 
 
 class RubricDeleteView(LoginRequiredMixin, DeleteView):
@@ -319,7 +319,7 @@ class RubricDeleteView(LoginRequiredMixin, DeleteView):
     fields = ('name',)
 
     def get_success_url(self, **kwargs):
-        return reverse_lazy("main:profile", args=(self.request.user,))
+        return f'{reverse("main:profile", args=(self.request.user,))}#rubrics'
 
 
 class TorrentTrackerUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
