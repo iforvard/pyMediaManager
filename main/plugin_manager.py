@@ -4,7 +4,7 @@ import asyncio
 import aiohttp
 from .plugins import trackers
 from .plugins import clients
-
+from wrapt_timeout_decorator import *
 
 def iter_namespace(ns_pkg):
     # Specifying the second argument (prefix) to iter_modules makes the
@@ -90,7 +90,7 @@ def get_m_cards_to_urls(urls, cookies):
         }
         return pages
 
-
+@timeout(6)
 def dw_torrent_aio(magnet_urls, tasks, plugin_client, host, login, password):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
