@@ -1,5 +1,6 @@
 import json
-
+from django.db.models import Q
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -9,7 +10,6 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
-from django import forms
 
 from homepagenews.homepagenews_editor import get_news_list_github
 from .models import MediaCard, Rubric, Settings, TorrentClient, TorrentTracker
@@ -33,8 +33,10 @@ def home_page(request):
 def search_by_m_cards(request):
     search_query = request.GET.get('q', '')
     m_cards = get_m_card_set(request)
+
     if search_query:
-        m_cards = m_cards.filter(full_name__icontains=search_query)
+        m_cards = m_cards.filter(Q(rubric__name__icontains=search_query) | Q(full_name__icontains=search_query) |
+                                 Q(short_name__icontains=search_query))
 
     context = {'data': m_cards, 'check': True, 'lists': True}
     return render(request, 'main/check.html', context)

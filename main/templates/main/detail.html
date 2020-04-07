@@ -5,7 +5,7 @@
 <div class="container mt-3 p-3 mb-2 bg-dark text-white">
     <div class="row">
         <div class="col">
-            <a href="{% url 'main:detail' pk=m_card.pk %}" class="btn btn-secondary float-left">{{ m_card.rubric }}</a>
+            <a href="{% url 'main:search' %}?q={{ m_card.rubric }}" class="btn btn-secondary float-left">{{ m_card.rubric }}</a>
         </div>
         <div class="col">
             <a href="{% url 'main:delete' pk=m_card.pk %}" class="btn btn-secondary float-right">&times;</a>
