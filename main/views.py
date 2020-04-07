@@ -62,7 +62,7 @@ def skip_m_cards(request, id_m_card):
 
 
 @login_required
-def download_m_cards(request, id_m_card=None):
+def download_m_cards(request, id_m_card='all'):
     commands = request.GET.get('commands', False)
     m_cards = download_torrents(request, id_m_card)
 
