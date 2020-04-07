@@ -1,10 +1,13 @@
 import json
-from django.db.models import Q
+import csv
+
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
@@ -417,6 +420,32 @@ class TorrentClientCreateView(LoginRequiredMixin, CreateView):
         form = super(TorrentClientCreateView, self).get_form(form_class)
         form.fields['password'].widget = forms.PasswordInput()
         return form
+
+
+@login_required
+def export_m_cards(request):
+    m_cards = get_m_card_set(request)
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="m_cards_{request.user}.csv"'
+
+    writer = csv.writer(response)
+    # writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
+    for m_card in m_cards:
+        writer.writerow([
+            m_card.full_name,
+            m_card.short_name,
+            m_card.comment,
+            m_card.size,
+            m_card.date_upd,
+            m_card.img_url,
+            m_card.url,
+            m_card.magnet_url,
+            m_card.torrent_url,
+            m_card.plugin_name,
+        ])
+
+    return response
 
 # TO-DO proxy-torrent-download
 # def get_torrent_file(request, torrent_id):
