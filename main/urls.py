@@ -3,7 +3,8 @@ from django.urls import path
 from .views import IndexMediaCardView, add_torrent, MediaCardDetailView, MediaCardUpdateView, \
     MediaCardDeleteView, check_m_cards, RubricCreateView, SettingsUpdateView, \
     TorrentClientCreateView, TorrentTrackerCreateView, ProfileSettingsView, TorrentTrackerUpdateView, \
-    TorrentClientUpdateView, RubricUpdateView, RubricDeleteView, home_page, skip_m_cards, download_m_cards
+    TorrentClientUpdateView, RubricUpdateView, RubricDeleteView, home_page, skip_m_cards, download_m_cards, \
+    TorrentTrackerDeleteView, TorrentClientDeleteView
 
 app_name = 'main'
 urlpatterns = [
@@ -14,6 +15,8 @@ urlpatterns = [
     path('add/torrent_tracker', TorrentTrackerCreateView.as_view(), name='add_torrent_tracker'),
     path('add/torrent_client', TorrentClientCreateView.as_view(), name='add_torrent_client'),
     path('delete/<int:pk>/', MediaCardDeleteView.as_view(), name='delete'),
+    path('delete/torrent_tracker/<int:pk>/', TorrentTrackerDeleteView.as_view(), name='delete_torrent_tracker'),
+    path('delete/torrent_client/<int:pk>/', TorrentClientDeleteView.as_view(), name='delete_torrent_client'),
     path('delete/rubric/<int:pk>/', RubricDeleteView.as_view(), name='rubric_delete'),
     path('update/<int:pk>/', MediaCardUpdateView.as_view(), name='update'),
     path('update/rubric/<int:pk>/', RubricUpdateView.as_view(), name='rubric_update'),

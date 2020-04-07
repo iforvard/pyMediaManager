@@ -69,6 +69,7 @@ def download_m_cards(request, id_m_card=None):
     context = {'data': m_cards, 'check': True}
     return render(request, 'main/check.html', context)
 
+
 @login_required
 def check_m_cards(request, key):
     m_cards, settings = get_m_card_set(request, get_settings=True)
@@ -255,6 +256,26 @@ class RubricDeleteView(LoginRequiredMixin, DeleteView):
     context_object_name = 'Rubric'
     template_name = 'main/delete_rubric.html'
     model = Rubric
+    fields = ('name',)
+
+    def get_success_url(self, **kwargs):
+        return f'{reverse("main:profile", args=(self.request.user,))}#rubrics'
+
+
+class TorrentTrackerDeleteView(LoginRequiredMixin, DeleteView):
+    context_object_name = 'Rubric'
+    template_name = 'main/delete_torrent_tracker.html'
+    model = TorrentTracker
+    fields = ('name',)
+
+    def get_success_url(self, **kwargs):
+        return f'{reverse("main:profile", args=(self.request.user,))}#rubrics'
+
+
+class TorrentClientDeleteView(LoginRequiredMixin, DeleteView):
+    context_object_name = 'Rubric'
+    template_name = 'main/delete_torrent_client.html'
+    model = TorrentClient
     fields = ('name',)
 
     def get_success_url(self, **kwargs):

@@ -1,0 +1,33 @@
+{% extends 'layout/basic.html' %}
+{% load bootstrap4 %}
+{% block title %} Удаление {% endblock %}
+{% block content %}
+<div class="mt-3 alert alert-danger" role="alert">
+    <div class="mt-3 mx-auto" style="width: 300px">
+        <h4 class=" alert-heading">Осторожно!</h4>
+        <p>Вы на странице удаления торрент-клиента "{{ Rubric.name }}".</p>
+        <hr>
+        <p class="mb-0">После удаления торрент-клиент не восстановить!.</p>
+    </div>
+</div>
+<div class="mt-3 p-3 mb-2 bg-dark text-white">
+    <h2>{{ Rubric.name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button class="mt-3 btn btn-outline-danger mx-auto btn-lg btn-block" type="submit">Удалить</button>
+    </form>
+    <div class="mt-3 row">
+        <div class="col">
+            <a href="{% url 'main:profile' username=user.username %}#rubrics" class="mt-3 btn btn-outline-success mx-auto btn-lg btn-block">Вернуться в настройки &lArr;|</a>
+        </div>
+    </div>
+</div>
+<div class="mt-3 alert alert-danger" role="alert">
+    <div class="mt-3 mx-auto" style="width: 300px">
+        <h4 class="alert-heading">Осторожно!</h4>
+        <p>Вы на странице удаления торрент-клиента "{{ Rubric.name }}".</p>
+        <hr>
+        <p class="mb-0">После удаления торрент-клиент не восстановить!.</p>
+    </div>
+</div>
+{% endblock %}

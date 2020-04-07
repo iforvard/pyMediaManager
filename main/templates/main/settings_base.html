@@ -64,9 +64,12 @@
         </div>
     </div>
     {% for TorrentTracker in TorrentTrackers %}
-    <div class="row mt-3">
-        <div class="col">
+    <div class="row">
+        <div class="col-8 mt-3">
             <a href="{% url 'main:upd_torrent_tracker' name=TorrentTracker.name %}" class="btn btn-light btn-block">{{ TorrentTracker.name }} - {{ TorrentTracker.login }}</a>
+        </div>
+        <div class="col mt-3">
+            <a href="{% url 'main:delete_torrent_tracker' pk=TorrentTracker.pk %}" class="btn btn-light btn-block">Del <i class="fas fa-trash-alt"></i></a>
         </div>
     </div>
     {% empty %}
@@ -85,9 +88,12 @@
         </div>
     </div>
     {% for TorrentClient in TorrentClients %}
-    <div class="row mt-3">
-        <div class="col">
+    <div class="row">
+        <div class="col-8 mt-3">
             <a href="{% url 'main:upd_torrent_client' name=TorrentClient.name %}" class="btn btn-light btn-block">{{ TorrentClient.name }} - {{ TorrentClient.login }}</a>
+        </div>
+        <div class="col mt-3">
+            <a href="{% url 'main:delete_torrent_client' pk=TorrentClient.pk %}" class="btn btn-light btn-block">Del <i class="fas fa-trash-alt"></i></a>
         </div>
     </div>
     {% empty %}
