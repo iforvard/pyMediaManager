@@ -4,7 +4,7 @@ from requests import ConnectionError
 from ..plugin_manager import dw_torrent_aio
 import json
 from ..models import MediaCard, Settings, TorrentClient, TorrentTracker
-
+from wrapt_timeout_decorator import *
 
 def message_or_print(request, commands, text, type_message=None):
     if commands:
@@ -16,7 +16,7 @@ def message_or_print(request, commands, text, type_message=None):
         )
 
 
-
+# @timeout(10)
 def download_torrents(request, id_m_card):
     tasks = {}
     magnet_urls = []

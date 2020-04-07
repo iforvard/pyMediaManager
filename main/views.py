@@ -86,7 +86,8 @@ def download_m_cards(request, id_m_card='all'):
             'Ошибка загрузки! Не удалось подключиться торрент-клиенту либо в настройках указан не верный профиль.',
             messages.ERROR
         )
-    context = {'data': m_cards, 'check': True}
+        m_cards = []
+    context = {'data': m_cards, 'check': True, 'key': 'reed'}
     return render(request, 'main/check.html', context)
 
 
