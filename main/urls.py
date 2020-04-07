@@ -4,7 +4,7 @@ from .views import IndexMediaCardView, add_torrent, MediaCardDetailView, MediaCa
     MediaCardDeleteView, check_m_cards, RubricCreateView, SettingsUpdateView, \
     TorrentClientCreateView, TorrentTrackerCreateView, ProfileSettingsView, TorrentTrackerUpdateView, \
     TorrentClientUpdateView, RubricUpdateView, RubricDeleteView, home_page, skip_m_cards, download_m_cards, \
-    TorrentTrackerDeleteView, TorrentClientDeleteView, index_m_cards_lists
+    TorrentTrackerDeleteView, TorrentClientDeleteView, index_m_cards_lists, search_by_m_cards
 
 app_name = 'main'
 urlpatterns = [
@@ -28,6 +28,7 @@ urlpatterns = [
     path('homepage/', home_page, name='homepage'),
     path('skip_m_cards/<str:id_m_card>', skip_m_cards, name='skip_m_cards'),
     path('download_m_cards/<str:id_m_card>', download_m_cards, name='download_m_cards'),
+    path('search', search_by_m_cards, name='search'),
     path('lists', index_m_cards_lists, name='index_m_cards_lists'),
     path('', IndexMediaCardView.as_view(), name='index'),
 ]
