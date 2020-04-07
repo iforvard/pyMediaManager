@@ -30,6 +30,13 @@ def home_page(request):
 
 
 @login_required
+def index_m_cards_lists(request):
+    m_cards = get_m_card_set(request)
+    context = {'data': m_cards, 'check': True, 'lists': True}
+    return render(request, 'main/check.html', context)
+
+
+@login_required
 def skip_m_cards(request, id_m_card):
     m_cards = get_m_card_set(request)
 
@@ -73,7 +80,6 @@ def download_m_cards(request, id_m_card=None):
 @login_required
 def check_m_cards(request, key):
     m_cards, settings = get_m_card_set(request, get_settings=True)
-    commands = request.GET.get('commands', False)
     if key == 'check':
         torrents = [m_card.url for m_card in m_cards]
         cookies = get_cookies(request.user)

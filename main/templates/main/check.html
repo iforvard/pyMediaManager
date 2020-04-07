@@ -1,27 +1,46 @@
 {% extends 'layout/basic.html' %}
 {% block title %} Настройки {% endblock %}
 {% block content %}
+<div class="panel_btn p-3 mt-3 bg-dark text-white">
+  <div class="row">
+    <div class="col">
+      <a class="btn btn-outline-success mt-1" data-placement="top" data-toggle="tooltip"
+         href="{% url 'main:download_m_cards' id_m_card='all' %}" title="Загрузить все медиа-карточки">
+        <i class="fas fa-arrow-circle-down"></i> All
+      </a>
+    </div>
+    <div class="col">
+      <a class="btn btn-outline-success mt-1" data-placement="top" data-toggle="tooltip"
+         href="{% url 'main:check' key='check' %}" title="Обновить все медиа-карточки">
+        <i class="fas fa-sync-alt"></i> All
+      </a>
+    </div>
+    <div class="col">
+      <a class="btn btn-outline-success mt-1" data-placement="top" data-toggle="tooltip"
+         href="{% url 'main:skip_m_cards' id_m_card='all' %}" title="Отметить все медиа-карточки как загруженные">
+        <i class="fas fa-power-off"></i> All
+      </a>
+    </div>
+    <div class="col mb-2">
+      <a class="btn btn-outline-success mt-1" data-placement="top" data-toggle="tooltip"
+         href="{% url 'main:index_m_cards_lists' %}" title="Отобразить все медиа-карточки">
+        <i class="fas fa-th-list"></i> All
+      </a>
+    </div>
+  </div>
+</div>
+
 <table class="mt-3 p-3 mb-2 table table-hover table-dark">
   <thead>
     <tr>
       <th scope="col">Название медиа карточки</th>
       <th scope="col">Дата обновления</th>
-      <th scope="col">
-        <a href="{% url 'main:download_m_cards' id_m_card='all' %}" class="btn btn-outline-success mt-1" data-toggle="tooltip" data-placement="top" title="Загрузить все медиа-карточки">
-          <i class="fas fa-arrow-circle-down"></i>
-        </a>
-        <a href="{% url 'main:check' key='check' %}" class="btn btn-outline-success mt-1" data-toggle="tooltip" data-placement="top" title="Обновить все медиа-карточки">
-          <i class="fas fa-sync-alt"></i>
-        </a>
-        <a href="{% url 'main:skip_m_cards' id_m_card='all' %}" class="btn btn-outline-success mt-1" data-toggle="tooltip" data-placement="top" title="Отметить все медиа-карточки как загруженные">
-          <i class="fas fa-power-off"></i>
-        </a>
-      </th>
+      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
     {% for m_card in data %}
-    {% if m_card.is_new_data %}
+    {% if m_card.is_new_data or lists %}
     <tr>
       <td><a class="text-white bg-dark" href="{% url 'main:detail' pk=m_card.pk %}">{{ m_card.short_name }}</a></td>
       <td>{{ m_card.date_upd }}</td>
