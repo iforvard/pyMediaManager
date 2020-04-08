@@ -59,13 +59,6 @@ def search_by_m_cards(request):
 
 
 @login_required
-def index_m_cards_lists(request):
-    m_cards = get_m_card_set(request)
-    context = {'data': m_cards, 'check': True, 'lists': True}
-    return render(request, 'main/check.html', context)
-
-
-@login_required
 def skip_m_cards(request, id_m_card):
     m_cards = get_m_card_set(request)
 
