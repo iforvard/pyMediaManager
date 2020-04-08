@@ -1,5 +1,7 @@
-import json
 import csv
+import io
+import json
+from datetime import datetime
 
 from django import forms
 from django.contrib import messages
@@ -38,9 +40,19 @@ def search_by_m_cards(request):
     m_cards = get_m_card_set(request)
 
     if search_query:
-        m_cards = m_cards.filter(Q(rubric__name__icontains=search_query) | Q(full_name__icontains=search_query) |
-                                 Q(short_name__icontains=search_query))
-
+        m_cards = m_cards.filter(
+            Q(rubric__name__icontains=search_query) |
+            Q(full_name__icontains=search_query) |
+            Q(short_name__icontains=search_query) |
+            Q(comment__icontains=search_query)
+        )
+    else:
+        search_query = 'Запрос пустой, отображены все записи'
+    message_or_print(
+        request,
+        False,
+        f'Результат поиска по запросу: {search_query}',
+    )
     context = {'data': m_cards, 'check': True, 'lists': True}
     return render(request, 'main/check.html', context)
 
@@ -435,17 +447,60 @@ def export_m_cards(request):
         writer.writerow([
             m_card.full_name,
             m_card.short_name,
-            m_card.comment,
             m_card.size,
             m_card.date_upd,
             m_card.img_url,
             m_card.url,
             m_card.magnet_url,
             m_card.torrent_url,
+            m_card.comment,
             m_card.plugin_name,
         ])
 
     return response
+
+
+@login_required
+def import_m_cards(request):
+    m_cards_csv = request.FILES.get('m_cards', '')
+    if m_cards_csv.name.endswith('.csv'):
+        m_cards = m_cards_csv.read().decode()
+        io_string = io.StringIO(m_cards)
+        comment = f'csv_import_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+        media_cards_obj = []
+        for m_card in csv.reader(io_string):
+            media_card = MediaCard.objects.create(
+                full_name=m_card[0],
+                short_name=m_card[1],
+                size=m_card[2],
+                date_upd=m_card[3],
+                img_url=m_card[4],
+                url=m_card[5],
+                magnet_url=m_card[6],
+                torrent_url=m_card[7],
+                comment=comment,
+                plugin_name=m_card[9],
+                author=request.user,
+            )
+            media_cards_obj.append(media_card)
+        message_or_print(
+            request,
+            False,
+            f'Импорт завершен, к записям добавлен комментарий - "{comment}"',
+        )
+    else:
+        message_or_print(
+            request,
+            False,
+            'Не верный формат файла! Для получения образца воспользуйтесь экспортом.',
+            messages.ERROR
+        )
+        return redirect(f'{reverse("main:profile", args=(request.user,))}#id_torrent')
+
+    context = {'data': media_cards_obj, 'check': True, 'lists': True}
+    return render(request, 'main/check.html', context)
+
+
 
 # TO-DO proxy-torrent-download
 # def get_torrent_file(request, torrent_id):

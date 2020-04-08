@@ -6,12 +6,14 @@ import json
 from ..models import MediaCard, Settings, TorrentClient, TorrentTracker
 from wrapt_timeout_decorator import *
 
-def message_or_print(request, commands, text, type_message=None):
+
+def message_or_print(request, commands, text, type_message=messages.SUCCESS):
     if commands:
         print(text)
     else:
         messages.add_message(
-            request, type_message,
+            request,
+            type_message,
             text,
         )
 

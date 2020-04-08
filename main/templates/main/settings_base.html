@@ -41,14 +41,15 @@
     </div>
 </div>
 <div class="container mt-3 bg-dark text-white">
-    <div class="row">
+    <div class="row" id="backup">
         <div class="col mt-2">
             <h4><i class="fas fa-database"></i> Резервное копирование:</h4>
         </div>
     </div>
     <div class="row mt-3">
         <div class="col">
-            <a href="#" class="btn btn-secondary btn-block"><i class="fas fa-file-upload"></i> Импорт</a>
+            <!-- Button trigger modal -->
+            <a href="#" class="btn btn-secondary btn-block" data-toggle="modal" data-target="#ModalImport_m_cards"><i class="fas fa-file-upload"></i> Импорт</a>
         </div>
     </div>
     <div class="row mt-3">
@@ -126,6 +127,36 @@
     <div class="row mt-3">
         <div class="col mb-3">
             <a href="{% url 'main:add_rubric' %}" class="btn btn-secondary btn-block">Добавить новую рубрику</a>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="ModalImport_m_cards" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Импорт .CSV медиа-карточек</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="{% url 'main:import_m_cards' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exampleFormControlFile1">Загрузите .CSV - файл со список медиа-карточек</label>
+                        <input type="file" name="m_cards" class="form-control-file" id="exampleFormControlFile1">
+                        <br><p>*Осторожно! Бета версия загрузчика</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Send</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

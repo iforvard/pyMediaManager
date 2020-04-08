@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'tampiw3*4d31d@v+djk9l(y4jh48dv
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
 CLOUD_HOST = os.environ.get('DJANGO_CLOUD_HOST', '127.0.0.1')
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', CLOUD_HOST, '192.168.1.67']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', CLOUD_HOST, '192.168.1.64']
 
 # Application definition
 
