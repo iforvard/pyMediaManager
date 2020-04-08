@@ -478,7 +478,7 @@ def import_m_cards(request):
                 url=m_card[5],
                 magnet_url=m_card[6],
                 torrent_url=m_card[7],
-                comment=comment,
+                comment=f'{comment}. {m_card[8]}',
                 plugin_name=m_card[9],
                 author=request.user,
             )
