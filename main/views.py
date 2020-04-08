@@ -46,12 +46,13 @@ def search_by_m_cards(request):
             Q(short_name__icontains=search_query) |
             Q(comment__icontains=search_query)
         )
+        search_query = f'Найдено записей {m_cards.count()}. Результат поиска по запросу: "{search_query}".'
     else:
-        search_query = 'Запрос пустой, отображены все записи'
+        search_query = f'Найдено записей {m_cards.count()}. Запрос пустой, отображены все записи.'
     message_or_print(
         request,
         False,
-        f'Результат поиска по запросу: {search_query}',
+        search_query,
     )
     context = {'data': m_cards, 'check': True, 'lists': True}
     return render(request, 'main/check.html', context)
@@ -499,8 +500,6 @@ def import_m_cards(request):
 
     context = {'data': media_cards_obj, 'check': True, 'lists': True}
     return render(request, 'main/check.html', context)
-
-
 
 # TO-DO proxy-torrent-download
 # def get_torrent_file(request, torrent_id):
