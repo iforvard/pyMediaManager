@@ -36,7 +36,7 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
     {% include "socialaccount/snippets/provider_list.html" with process="login" %}
   </ul>
 
-  <div class="login-or">{% trans 'or' %}</div>
+<!--  <div class="login-or">{% trans 'or' %}</div>-->
 
 </div>
 
@@ -49,7 +49,7 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
 
 <form class="login" method="POST" action="{% url 'account_login' %}">
   {% csrf_token %}
-  {% bootstrap_form form layout='horizontal' %}
+  {% bootstrap_form form layout='vertical' %}
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
@@ -57,7 +57,7 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
   <button class="primaryAction" type="submit">{% trans "Sign In" %}</button>
 </form>
 </div>
-    </div>
-    <a href="{% url 'main:homepage' %}">Home page</a> | <a href="https://github.com/iforvard/pyMediaManager">Github</a>
   </div>
+    <a href="{% url 'main:homepage' %}">Home page</a> | <a href="https://github.com/iforvard/pyMediaManager">Github</a>
+</div>
 {% endblock %}
