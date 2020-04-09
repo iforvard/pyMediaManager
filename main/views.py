@@ -44,7 +44,8 @@ def search_by_m_cards(request):
             Q(rubric__name__icontains=search_query) |
             Q(full_name__icontains=search_query) |
             Q(short_name__icontains=search_query) |
-            Q(comment__icontains=search_query)
+            Q(comment__icontains=search_query) |
+            Q(plugin_name__icontains=search_query)
         )
         search_query = f'Найдено записей {m_cards.count()}. Результат поиска по запросу: "{search_query}".'
     else:
