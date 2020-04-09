@@ -6,8 +6,13 @@ from pytz import utc
 
 def params(key):
     plugin_params = {
-        'auth_required': False,
+        # Разрешение для работы без авторизации
+        'parsing': True,
+        'torrent_dw': False,
+        # Наличие возможность скачать по магнет-ссылки
+        'magnet_dw': True,
         # This name must match the name of the plugin file. Rutracker.py => 'name': 'Rutracker'
+        # You cannot use a period in a name.
         'name': 'Rutracker',
         'url_prefix': 'https://rutracker.org/forum/viewtopic.php?t='
     }

@@ -75,7 +75,7 @@ def skip_m_cards(request, id_m_card):
 @login_required
 def download_m_cards(request, id_m_card='all'):
     commands = request.GET.get('commands', False)
-    m_cards = download_torrents(request, id_m_card)
+    m_cards, stop_list = download_torrents(request, id_m_card, commands)
 
     if m_cards:
         message_or_print(
@@ -85,9 +85,9 @@ def download_m_cards(request, id_m_card='all'):
             messages.SUCCESS
         )
         if id_m_card.isdigit():
-            uncheck_new_data_m_card(m_cards.filter(pk=id_m_card), request, commands)
+            uncheck_new_data_m_card(m_cards.filter(pk=id_m_card), request, commands, stop_list=stop_list)
         else:
-            uncheck_new_data_m_card(m_cards, request, commands)
+            uncheck_new_data_m_card(m_cards, request, commands, stop_list=stop_list)
     else:
         message_or_print(
             request,

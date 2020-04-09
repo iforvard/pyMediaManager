@@ -42,7 +42,7 @@
     {% for m_card in data %}
     {% if m_card.is_new_data or lists %}
     <tr>
-      <td><a class="text-white bg-dark" href="{% url 'main:detail' pk=m_card.pk %}">{{ m_card.short_name }}</a></td>
+      <td><a class="text-white bg-dark" href="{% url 'main:detail' pk=m_card.pk %}">[{{ m_card.plugin_name }}] {{ m_card.short_name }}</a></td>
       <td>{{ m_card.date_upd }}</td>
       <td>
         <a href="{% url 'main:download_m_cards' id_m_card=m_card.pk %}" class="btn btn-secondary mt-1">
