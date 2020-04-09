@@ -95,8 +95,8 @@ def get_m_cards_to_urls(urls, cookies):
 @timeout(6)
 def dw_torrent_aio(magnet_urls, tasks, plugin_client, host, login, password):
     print((magnet_urls, tasks, plugin_client, host, login, password))
-    # loop = asyncio.new_event_loop()
-    # asyncio.set_event_loop(loop)
-    # torrents = loop.run_until_complete(async_manager_torrent(tasks))
-    torrents = asyncio.run(async_manager_torrent(tasks))
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    torrents = loop.run_until_complete(async_manager_torrent(tasks))
+    # torrents = asyncio.run(async_manager_torrent(tasks))
     dpc[plugin_client].dw_torrent(torrents, magnet_urls, host, login, password)
