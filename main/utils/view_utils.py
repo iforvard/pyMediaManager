@@ -62,7 +62,6 @@ def download_torrents(request, id_m_card, commands):
             else:
                 # Загрузка торрент-файла без авторизации
                 tasks[m_card.torrent_url] = {}
-    print('Все ок я тут')
     try:
         dw_torrent_aio(
             magnet_urls=magnet_urls,
@@ -73,7 +72,7 @@ def download_torrents(request, id_m_card, commands):
             password=password,
         )
     except:
-        return False
+        return False, False
     return m_cards, stop_list
 
 
