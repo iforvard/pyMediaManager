@@ -69,4 +69,4 @@ SECRET_KEY - замените на полученный ранее ключ
 [aiohttp]: https://aiohttp.readthedocs.io/en/stable/
 [Видео-демонстрация]: https://www.youtube.com/watch?v=milw1dDt9dk
 [pymediamanager.herokuapp.com]: https://pymediamanager.herokuapp.com
-[Windows installer]: https://github.com/iforvard/pyMediaManager/blob/master/installer/installer.exe
+[Windows installer]: https://github.com/iforvard/pyMediaManager/raw/master/installer/installer.exe
