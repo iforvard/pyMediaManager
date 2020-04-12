@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 from dateparser import parse
-from pytz import utc
 
 
 def params(key):
@@ -36,8 +35,7 @@ def parser(page):
         date_torrent = tech_details[2].text
     else:
         date_torrent = tech_details[1].text
-    date_torrent = parse(date_torrent)
-    date_torrent = utc.localize(date_torrent)
+    date_torrent = parse(date_torrent, settings={'TIMEZONE': 'UTC', 'RETURN_AS_TIMEZONE_AWARE': True})
 
     media_cads = {
         'short_name': str(full_name).split(' /')[0],

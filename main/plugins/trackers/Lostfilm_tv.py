@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 from dateparser import parse
-from pytz import utc
 
 
 def params(key):
@@ -33,9 +32,11 @@ def parser(page):
     tables = soup.find('table').find_all('tr')
     date_raw = tables[last_row].find("td", class_="delta").text
     date_torrent = date_raw.replace('Ru: ', '').split('Eng')[0]
-    date_torrent = parse(date_torrent)
-    date_torrent = utc.localize(date_torrent)
-
+    print(date_torrent)
+    date_torrent = parse(
+        date_torrent,
+        date_formats=['%d.%m.%Y'],
+        settings={'TIMEZONE': 'UTC', 'RETURN_AS_TIMEZONE_AWARE': True})
     series_id = soup.select('[data-episode]')[0]['data-code'].split('-')
     img_url = f'http://static.lostfilm.tv/Images/{series_id[0]}/Posters/shmoster_s{series_id[1]}.jpg'
     media_cads = {

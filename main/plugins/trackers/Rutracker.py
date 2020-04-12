@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 from dateparser import parse
-from pytz import utc
 
 
 def params(key):
@@ -46,8 +45,7 @@ def parser(page):
         date_torrent = soup.find('a', {'class': 'p-link small'}).string
     else:
         date_torrent = date_torrent.split('ред. ')[-1]
-    date_torrent = parse(date_torrent)
-    date_torrent = utc.localize(date_torrent)
+    date_torrent = parse(date_torrent, settings={'TIMEZONE': 'UTC', 'RETURN_AS_TIMEZONE_AWARE': True})
 
     name_media_content = soup.find('meta', {'name': 'description'})['content']
 
