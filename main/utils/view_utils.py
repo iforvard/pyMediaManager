@@ -1,10 +1,10 @@
+import json
+
 from django.contrib import messages
 from django.db.models import Q
-from requests import ConnectionError
-from ..plugin_manager import dw_torrent_aio, dpt
-import json
+
 from ..models import MediaCard, Settings, TorrentClient, TorrentTracker
-from wrapt_timeout_decorator import *
+from ..plugin_manager import dw_torrent_aio, dpt
 
 
 def message_or_print(request, commands, text, type_message=messages.SUCCESS):
@@ -99,6 +99,8 @@ def get_m_card_set(request, get_settings=False):
 
 
 def uncheck_new_data_m_card(m_cards, request, commands, stop_list=None):
+    if stop_list is None:
+        stop_list = []
     for m_card in m_cards:
         if m_card.author == request.user:
             if m_card.id in stop_list:
