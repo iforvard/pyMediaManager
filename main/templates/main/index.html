@@ -1,5 +1,6 @@
 {% extends 'layout/basic.html' %}
 {% load static %}
+{% load bootstrap_pagination %}
 {% block title %} Главная {% endblock %}
 {% block content %}
 <script>
@@ -60,35 +61,12 @@ function up() {
     </div>
 </div>
 {% endfor %}
-<div class="row float-right">
-    <div class="col">
-        <form class="input_pag" action="{% url 'main:index' %}" method="get">
-            <input type="text" name="paginate_by" list="pagination_nums">
-            <datalist id="pagination_nums">
-                <option value="5">
-                <option value="10">
-                <option value="15">
-                <option value="25">
-                <option value="50">
-                <option value="100">
-            </datalist>
-        </form>
+<div class="container mt-3 p-0">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-auto">
+            {% bootstrap_paginate page_obj range=5 show_prev_next="true" show_first_last="true" %}
+        </div>
     </div>
-
-    <div class="col">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-        <a id="paginLeft" href="?page={{ page_obj.previous_page_number }}">&lt;</a>
-        {% endif %}
-
-        <span class="current">
-        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
-        </span>
-
-        {% if page_obj.has_next %}
-        <a id="paginRight" href="?page={{ page_obj.next_page_number }}">&gt;</a>
-        {% endif %}
-    </span>
-    </div>
-    </div>
+</div>
 {% endblock %}
