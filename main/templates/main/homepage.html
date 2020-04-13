@@ -34,7 +34,8 @@
 </nav>
 <div class="blog">
     {% autoescape off %}
-    {{ main_head }}
+
+    <div class="text-light">{{ main_head }}</div>
     {% endautoescape %}
 </div>
     <div class="container">
@@ -50,14 +51,14 @@
 
 <div class="container">
     <div class="row">
-        <div class="col"><h2>Новости:</h2></div>
+        <div class="col text-light"><h2>Новости:</h2></div>
     </div>
     {% for news in news_list %}
     <div class="row">
-        <div class="col"><br><h5>{{ news.head }}</h5></div>
+        <div class="col text-light"><br><h5>{{ news.head }}</h5></div>
     </div>
     <div class="row">
-        <div class="col">
+        <div class="col text-light">
             {% autoescape off %}
             {{ news.body }}
             {% endautoescape %}

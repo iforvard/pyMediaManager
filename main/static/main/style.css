@@ -1,5 +1,9 @@
 /* Custom page CSS
 -------------------------------------------------- */
+
+body {
+    background-color: #252525;
+}
 .container {
     width: auto;
     max-width: 768px;
