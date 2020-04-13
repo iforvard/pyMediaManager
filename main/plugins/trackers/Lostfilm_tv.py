@@ -30,15 +30,17 @@ def parser(page):
     if future_row:
         last_row = 1
     tables = soup.find('table').find_all('tr')
+    data_episode = tables[last_row].find("div", class_="haveseen-btn")['data-episode']
+    series_id, season, episode = tables[last_row].find("div", class_="haveseen-btn")['data-code'].split('-')
     date_raw = tables[last_row].find("td", class_="delta").text
     date_torrent = date_raw.replace('Ru: ', '').split('Eng')[0]
-    print(date_torrent)
     date_torrent = parse(
         date_torrent,
         date_formats=['%d.%m.%Y'],
         settings={'TIMEZONE': 'UTC', 'RETURN_AS_TIMEZONE_AWARE': True})
-    series_id = soup.select('[data-episode]')[0]['data-code'].split('-')
-    img_url = f'http://static.lostfilm.tv/Images/{series_id[0]}/Posters/shmoster_s{series_id[1]}.jpg'
+
+    torrent_url = f'https://www.lostfilm.tv/v_search.php?a={data_episode}'
+    img_url = f'http://static.lostfilm.tv/Images/{series_id}/Posters/shmoster_s{season}.jpg'
     media_cads = {
         'short_name': full_name,
         'full_name': full_name,
@@ -46,7 +48,7 @@ def parser(page):
         'date_upd': date_torrent,
         'img_url': img_url,
         'magnet_url': '',
-        'torrent_url': '',
+        'torrent_url': torrent_url,
         'url': f'{url_topic}{url}',
         'plugin_name': params('name')
     }
@@ -59,6 +61,6 @@ def login(login_user, password_user):
 
 
 if __name__ == '__main__':
-    url = 'https://www.lostfilm.tv/series/Better_Call_Saul'
+    url = 'https://www.lostfilm.tv/series/Better_Call_Saul/seasons'
     r = requests.get(url)
     print(parser(r.text))
