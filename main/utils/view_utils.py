@@ -8,7 +8,7 @@ from ..models import MediaCard, Settings, TorrentClient, TorrentTracker
 from ..plugin_manager import dw_torrent_aio, dpt, get_m_cards_to_urls
 
 
-def message_or_print(request, text, commands, type_message=messages.SUCCESS):
+def message_or_print(request, commands, text,  type_message=messages.SUCCESS):
     if commands:
         print(text)
     else:

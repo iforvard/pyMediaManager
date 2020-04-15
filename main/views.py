@@ -545,7 +545,6 @@ class LatestPostsFeed(Feed):
         return item.date_upd
 
     def item_link(self, item):
-        print(self.uid)
         return reverse('main:get_torrent', args=[item.pk, self.uid])
 
 

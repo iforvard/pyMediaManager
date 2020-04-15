@@ -50,11 +50,9 @@
     </div>
     <div class="row">
         <div class="col">
-
-            <p><b>RSS Feed</b> - для просмотра в ссылке укажите номер uid. <a class="text-white bg-dark" href="{% url 'main:post_feed' uid=Settings.uuid %}">
-                {{ request.META.HTTP_HOST }}/feed/uid/rss
-            </a></p>
-
+            <p><a class="text-white bg-dark" id="rss_feed" href="{% url 'main:post_feed' uid=Settings.uuid %}"><i class="fas fa-rss-square"></i> <b>RSS Feed</b></a> -
+                Подписка на медиа-карточки у которых есть обновления. Для просмотра без авторизации в ссылке указан ваш номер uid. При смене uid ссылка измениться автоматически.
+            </p>
         </div>
     </div>
     <div class="row">
