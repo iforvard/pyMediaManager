@@ -1,7 +1,9 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.crypto import get_random_string
+
 from .plugin_manager import dpt, dpc
 
 
@@ -65,6 +67,9 @@ class MediaCard(BaseModel):
     )
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
+    # def get_absolute_url(self):
+    #     return "/detail/%s/" % self.pk
+
 
 class Rubric(BaseModel):
     name = models.CharField(
@@ -93,6 +98,8 @@ class Settings(BaseModel):
         on_delete=models.SET_NULL,
         verbose_name="Торрент клинет",
     )
+
+    uuid = models.CharField(max_length=100, verbose_name="uuid", blank=True)
 
     def __str__(self):
         return str(self.user)
@@ -138,10 +145,17 @@ class TorrentClient(BaseModel):
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
+    """
+    При создании нового пользователя, у него создаются дефолтные настройки.
+    """
     if created:
-        Settings.objects.create(user=instance)
+        settings = Settings.objects.create(user=instance)
+        settings.uuid = f'{settings.id}:{get_random_string(64)}'
 
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
+    """
+    Сохранение настроек для ногвого пользователя.
+    """
     instance.settings.save()

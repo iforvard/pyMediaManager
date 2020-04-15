@@ -5,12 +5,13 @@ from .views import IndexMediaCardView, add_torrent, MediaCardDetailView, MediaCa
     TorrentClientCreateView, TorrentTrackerCreateView, ProfileSettingsView, TorrentTrackerUpdateView, \
     TorrentClientUpdateView, RubricUpdateView, RubricDeleteView, home_page, skip_m_cards, download_m_cards, \
     TorrentTrackerDeleteView, TorrentClientDeleteView, search_by_m_cards, export_m_cards, \
-    import_m_cards
+    import_m_cards, LatestPostsFeed, get_new_uid, get_torrent_file
 
 app_name = 'main'
 urlpatterns = [
     path('profile/<slug:username>/', ProfileSettingsView.as_view(), name='profile'),
     path('settings/<slug:username>/', SettingsUpdateView.as_view(), name='settings'),
+    path('add/new_uid', get_new_uid, name='new_uid'),
     path('add/torrent', add_torrent, name='add_torrent'),
     path('add/rubric', RubricCreateView.as_view(), name='add_rubric'),
     path('add/torrent_tracker', TorrentTrackerCreateView.as_view(), name='add_torrent_tracker'),
@@ -31,6 +32,7 @@ urlpatterns = [
     path('search', search_by_m_cards, name='search'),
     path('export_m_cards', export_m_cards, name='export_m_cards'),
     path('import_m_cards', import_m_cards, name='import_m_cards'),
+    path("feed/<str:uid>/rss", LatestPostsFeed(), name="post_feed"),
     path('', IndexMediaCardView.as_view(), name='index'),
-    # path('dw/<str:torrent_id>/', get_torrent_file, name='dw'),
+    path('get_torrent/<str:m_card_id>/<str:uid>', get_torrent_file, name='get_torrent'),
 ]

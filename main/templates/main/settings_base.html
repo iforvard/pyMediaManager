@@ -1,5 +1,6 @@
 {% extends 'layout/basic.html' %}
 {% load bootstrap4 %}
+{% block title %} Настройки {% endblock %}
 {% block content %}
 <div class="container my-3 bg-dark text-white">
     <div class="row">
@@ -25,8 +26,40 @@
         </div>
     </div>
     <div class="row">
+        <div class="col mb-3">
+            <button class="btn btn-secondary mb-3" type="button" data-toggle="collapse" data-target="#uuid"
+                    aria-expanded="false" aria-controls="collapseExample">
+                Ваш uid
+            </button>
+            <div class="collapse" id="uuid">
+                <div class="card card-body bg-secondary text-white">
+                    {{ Settings.uuid }}
+                    <div class="row mt-3">
+                        <div class="col">
+                            <a href="#" class="btn btn-light btn-block" onclick="copyUUID()">Копировать</a>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col mb-3">
+                            <a href="{% url 'main:new_uid' %}" class="btn btn-light btn-block">Создать новый</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col">
-            <p>Просмотр и загрузка "медиа-карточки" других авторов, если разрешен просмотр всем: <b>{{ Settings.use_shared_cards }}</b></p>
+
+            <p><b>RSS Feed</b> - для просмотра в ссылке укажите номер uid. <a class="text-white bg-dark" href="{% url 'main:post_feed' uid=Settings.uuid %}">
+                {{ request.META.HTTP_HOST }}/feed/uid/rss
+            </a></p>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Просмотр/загрузка "медиа-карточек" других авторов, если для них разрешен просмотр всем: <b>{{ Settings.use_shared_cards }}</b></p>
         </div>
     </div>
     <div class="row">
@@ -160,5 +193,19 @@
         </div>
     </div>
 </div>
-
+<script>
+  if (window.location.search == '?uuid') {
+  $('#uuid').addClass('show');
+  }
+</script>
+<script>
+function copyUUID() {
+                    var range = document.createRange();
+                    range.selectNode(document.getElementById("uuid"));
+                    window.getSelection().removeAllRanges(); // clear current selection
+                    window.getSelection().addRange(range); // to select text
+                    document.execCommand("copy");
+                    window.getSelection().removeAllRanges();// to deselect
+                }
+</script>
 {% endblock %}

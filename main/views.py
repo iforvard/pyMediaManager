@@ -1,3 +1,4 @@
+import asyncio
 import csv
 import io
 import json
@@ -8,19 +9,21 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.syndication.views import Feed
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
+from django.utils.feedgenerator import DefaultFeed
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
 
 from homepagenews.homepagenews_editor import get_news_list_github
 from .models import MediaCard, Rubric, Settings, TorrentClient, TorrentTracker
-from .plugin_manager import dpt, get_m_cards_to_urls
+from .plugin_manager import dpt, get_m_cards_to_urls, async_manager_torrent
 from .utils.view_utils import message_or_print, download_torrents, get_cookies, uncheck_new_data_m_card, \
-    get_m_card_set
+    get_m_card_set, create_new_uid, dw_update_m_cards, get_user_by_uid, sort_dw_tasks_m_cards
 
 
 def home_page(request):
@@ -32,6 +35,12 @@ def home_page(request):
                    'main_head': '<b>pyMediaManager</b> - менеджер торрент клиентов и трекеров'
                    }
     return render(request, 'main/homepage.html', context)
+
+
+@login_required
+def get_new_uid(request):
+    create_new_uid(request)
+    return redirect(f'{reverse("main:profile", args=(request.user,))}?uuid')
 
 
 @login_required
@@ -76,7 +85,16 @@ def skip_m_cards(request, id_m_card):
 @login_required
 def download_m_cards(request, id_m_card='all'):
     commands = request.GET.get('commands', False)
-    m_cards, stop_list = download_torrents(request, id_m_card, commands)
+    m_cards, stop_list = download_torrents(request, id_m_card)
+
+    if stop_list:
+        for m_card in stop_list:
+            message_or_print(
+                request,
+                commands,
+                f'Медиа-карточка "{m_card.short_name}" не загружена. Необходима авторизация в планиге "{m_card.plugin_name}", проверьте настройки.',
+                messages.ERROR
+            )
 
     if m_cards:
         message_or_print(
@@ -103,20 +121,10 @@ def download_m_cards(request, id_m_card='all'):
 
 @login_required
 def check_m_cards(request, key):
-    m_cards, settings = get_m_card_set(request, get_settings=True)
     if key == 'check':
-        torrents = [m_card.url for m_card in m_cards]
-        cookies = get_cookies(request.user)
-        upd_m_cards = get_m_cards_to_urls(torrents, cookies)
-
-        for m_card in m_cards:
-            if upd_m_cards[m_card.url]['date_upd'] > m_card.date_upd:
-                m_card.date_upd = upd_m_cards[m_card.url]['date_upd']
-                m_card.full_name = upd_m_cards[m_card.url]['full_name']
-                m_card.magnet_url = upd_m_cards[m_card.url]['magnet_url']
-                m_card.size = upd_m_cards[m_card.url]['size']
-                m_card.is_new_data = True
-                m_card.save()
+        m_cards = dw_update_m_cards(request)
+    else:
+        m_cards = get_m_card_set(request)
 
     context = {'data': m_cards, 'key': key, 'check': True}
     return render(request, 'main/check.html', context)
@@ -462,7 +470,7 @@ def import_m_cards(request):
         m_cards = m_cards_csv.read().decode()
         io_string = io.StringIO(m_cards)
         comment = f'csv_import_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
-        media_cards_obj = []
+        media_cards_objects = []
         for m_card in csv.reader(io_string):
             media_card = MediaCard.objects.create(
                 full_name=m_card[0],
@@ -477,7 +485,7 @@ def import_m_cards(request):
                 plugin_name=m_card[9],
                 author=request.user,
             )
-            media_cards_obj.append(media_card)
+            media_cards_objects.append(media_card)
         message_or_print(
             request,
             False,
@@ -492,17 +500,74 @@ def import_m_cards(request):
         )
         return redirect(f'{reverse("main:profile", args=(request.user,))}#id_torrent')
 
-    context = {'data': media_cards_obj, 'check': True, 'lists': True}
+    context = {'data': media_cards_objects, 'check': True, 'lists': True}
     return render(request, 'main/check.html', context)
 
-# TO-DO proxy-torrent-download
-# def get_torrent_file(request, torrent_id):
-#     url = rutracker.url_dl + torrent_id
-#
-#     loop = asyncio.new_event_loop()
-#     asyncio.set_event_loop(loop)
-#     my_data = loop.run_until_complete(rutracker.get_data_tracker_main([url], torrent=True))
-#
-#     response = HttpResponse(*my_data, content_type='application/x-bittorrent')
-#     response['Content-Disposition'] = 'attachment; filename="foo.torrent"'
-#     return response
+
+class CorrectMimeTypeFeed(DefaultFeed):
+    content_type = 'application/xml; charset=utf-8'
+
+
+class LatestPostsFeed(Feed):
+    title = "MediaCards"
+    link = "https://pymediamanager.herokuapp.com/"
+    description = "MediaCards UPD"
+    feed_type = CorrectMimeTypeFeed
+    item_author_link = "https://pymediamanager.herokuapp.com/"
+
+    def get_object(self, request, uid):
+        user = get_user_by_uid(uid)
+        return user, uid
+
+
+    def items(self, user):
+        if user[0]:
+            m_cards = get_m_card_set(user=user[0]).filter(is_new_data=True)
+            self.uid = user[1]
+            return m_cards
+        # Не верно указан UUID в URL
+        return []
+
+    def item_title(self, item):
+        return item.short_name
+
+    def item_description(self, item):
+        return item.pk
+
+    def item_guid(self, item):
+        return item.pk
+
+    def item_pubdate(self, item):
+        """
+        Takes an item, as returned by items(), and returns the item's
+        pubdate.
+        """
+        return item.date_upd
+
+    def item_link(self, item):
+        print(self.uid)
+        return reverse('main:get_torrent', args=[item.pk, self.uid])
+
+
+def get_torrent_file(request, m_card_id, uid):
+    """
+    proxy-torrent-download
+
+    """
+    user = get_user_by_uid(uid)
+    if user:
+        m_cards = MediaCard.objects.filter(id=m_card_id)
+        m_card = m_cards.first()
+        if m_card.author == user or m_card.is_view:
+            stop_list_url, urls, magnet_urls = sort_dw_tasks_m_cards(m_cards, user, m_card_id)
+            if urls:
+                torrent = asyncio.run(async_manager_torrent(urls))
+                response = HttpResponse(*torrent, content_type='application/x-bittorrent')
+                response['Content-Disposition'] = f'attachment; filename="{m_card.id}.torrent"'
+                return response
+            elif magnet_urls:
+                response = HttpResponse("", status=302)
+                response['Location'] = magnet_urls[0]
+                return response
+
+    return HttpResponseNotFound()
