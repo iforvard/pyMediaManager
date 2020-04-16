@@ -525,11 +525,11 @@ class LatestPostsFeed(Feed):
             m_cards = get_m_card_set(user=user[0]).filter(is_new_data=True)
             self.uid = user[1]
             return m_cards
-        # Не верно указан UUID в URL
+        # Не верно указан UID в URL
         return []
 
     def item_title(self, item):
-        return f'{item.short_name} {item.date_upd}'
+        return f'{item.short_name} | {item.date_upd}'
 
     def item_description(self, item):
         return item.full_name
