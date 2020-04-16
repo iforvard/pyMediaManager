@@ -545,7 +545,7 @@ class LatestPostsFeed(Feed):
         """
         Takes an item, as return by items(), and returns the item's ID.
         """
-        return f'{item.pk} {item.date_upd}'
+        return f'{item.pk} | {item.date_upd}'
 
     def item_updateddate(self, item):
         """
