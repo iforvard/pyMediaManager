@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
+from django.utils.feedgenerator import Atom1Feed
 from django.utils.feedgenerator import DefaultFeed
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
@@ -510,10 +511,9 @@ class CorrectMimeTypeFeed(DefaultFeed):
 
 class LatestPostsFeed(Feed):
     title = "MediaCards"
-    link = "https://pymediamanager.herokuapp.com/"
+    link = ''
     description = "MediaCards UPD"
-    feed_type = CorrectMimeTypeFeed
-    item_author_link = "https://pymediamanager.herokuapp.com/"
+    feed_type = Atom1Feed
 
     def get_object(self, request, uid):
         user = get_user_by_uid(uid)
@@ -529,18 +529,28 @@ class LatestPostsFeed(Feed):
         return []
 
     def item_title(self, item):
-        return item.short_name
+        return f'{item.short_name} {item.date_upd}'
 
     def item_description(self, item):
-        return item.pk
-
-    def item_guid(self, item):
-        return item.pk
+        return item.full_name
 
     def item_pubdate(self, item):
         """
         Takes an item, as returned by items(), and returns the item's
         pubdate.
+        """
+        return item.published
+
+    def item_guid(self, item):
+        """
+        Takes an item, as return by items(), and returns the item's ID.
+        """
+        return f'{item.pk} {item.date_upd}'
+
+    def item_updateddate(self, item):
+        """
+        Takes an item, as returned by items(), and returns the item's
+        updateddate.
         """
         return item.date_upd
 
@@ -554,6 +564,7 @@ def get_torrent_file(request, m_card_id, uid):
 
     """
     user = get_user_by_uid(uid)
+    response = None
     if user:
         m_cards = MediaCard.objects.filter(id=m_card_id)
         m_card = m_cards.first()
@@ -563,10 +574,12 @@ def get_torrent_file(request, m_card_id, uid):
                 torrent = asyncio.run(async_manager_torrent(urls))
                 response = HttpResponse(*torrent, content_type='application/x-bittorrent')
                 response['Content-Disposition'] = f'attachment; filename="{m_card.id}.torrent"'
-                return response
             elif magnet_urls:
                 response = HttpResponse("", status=302)
                 response['Location'] = magnet_urls[0]
-                return response
 
+        if response:
+            # m_card.is_new_data = False
+            # m_card.save()
+            return response
     return HttpResponseNotFound()

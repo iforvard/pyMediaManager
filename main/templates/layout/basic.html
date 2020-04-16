@@ -30,7 +30,7 @@
                 <a class="nav-link" href="{% url 'main:profile' username=user.username %}"><i class="fas fa-sliders-h"></i> Настройки</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'main:profile' username=user.username %}#rss_feed"><i class="fas fa-rss-square"></i> RSS Feed</a>
+                <a class="nav-link" href="{% url 'main:profile' username=user.username %}?uuid#uuid"><i class="fas fa-rss-square"></i> RSS Feed</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'main:homepage' %}"><i class="fab fa-readme"></i> Blog</a>

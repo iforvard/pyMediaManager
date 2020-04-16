@@ -29,7 +29,7 @@
         <div class="col mb-3">
             <button class="btn btn-secondary mb-3" type="button" data-toggle="collapse" data-target="#uuid"
                     aria-expanded="false" aria-controls="collapseExample">
-                Ваш uid
+                <i class="fas fa-user-secret"></i> <b>Ваш UID</b>
             </button>
             <div class="collapse" id="uuid">
                 <div class="card card-body bg-secondary text-white">
@@ -50,8 +50,8 @@
     </div>
     <div class="row">
         <div class="col">
-            <p><a class="text-white bg-dark" id="rss_feed" href="{% url 'main:post_feed' uid=Settings.uuid %}"><i class="fas fa-rss-square"></i> <b>RSS Feed</b></a> -
-                Подписка на медиа-карточки у которых есть обновления. Для просмотра без авторизации в ссылке указан ваш номер uid. При смене uid ссылка измениться автоматически.
+            <p><a class="btn btn-secondary" id="rss_feed" href="{% url 'main:post_feed' uid=Settings.uuid %}"><i class="fas fa-rss-square"></i> <b>RSS Feed</b></a> -
+                Подписка на медиа-карточки у которых есть обновления. Для просмотра без авторизации в ссылке указан ваш номер <b>UID</b>. При смене <b>UID</b> ссылка измениться автоматически.
             </p>
         </div>
     </div>
