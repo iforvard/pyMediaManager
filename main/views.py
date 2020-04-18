@@ -571,12 +571,12 @@ def get_torrent_file(request, m_card_id, uid):
         if m_card.author == user or m_card.is_view:
             stop_list_url, urls, magnet_urls = sort_dw_tasks_m_cards(m_cards, user, m_card_id)
             if urls:
-                t_file = asyncio.run(async_manager_torrent(urls))
+                t_file = asyncio.run(async_manager_torrent(urls))[0]
             elif magnet_urls:
                 t_file = get_torrent_by_magnet(*magnet_urls)
 
         if t_file:
-            response = HttpResponse(*t_file, content_type='application/x-bittorrent')
+            response = HttpResponse(t_file, content_type='application/x-bittorrent')
             response['Content-Disposition'] = f'attachment; filename="{m_card.id}.torrent"'
             # m_card.is_new_data = False
             # m_card.save()
