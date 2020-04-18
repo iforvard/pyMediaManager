@@ -5,7 +5,7 @@ from .views import IndexMediaCardView, add_torrent, MediaCardDetailView, MediaCa
     TorrentClientCreateView, TorrentTrackerCreateView, ProfileSettingsView, TorrentTrackerUpdateView, \
     TorrentClientUpdateView, RubricUpdateView, RubricDeleteView, home_page, skip_m_cards, download_m_cards, \
     TorrentTrackerDeleteView, TorrentClientDeleteView, search_by_m_cards, export_m_cards, \
-    import_m_cards, LatestPostsFeed, get_new_uid, get_torrent_file
+    import_m_cards, MCardsUPDFeed, get_new_uid, get_torrent_file
 
 app_name = 'main'
 urlpatterns = [
@@ -32,7 +32,7 @@ urlpatterns = [
     path('search', search_by_m_cards, name='search'),
     path('export_m_cards', export_m_cards, name='export_m_cards'),
     path('import_m_cards', import_m_cards, name='import_m_cards'),
-    path("feed/<str:uid>/rss", LatestPostsFeed(), name="post_feed"),
+    path("feed/<str:uid>/rss", MCardsUPDFeed(), name="post_feed"),
     path('', IndexMediaCardView.as_view(), name='index'),
     path('get_torrent/<str:m_card_id>/<str:uid>', get_torrent_file, name='get_torrent'),
 ]

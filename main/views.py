@@ -14,7 +14,6 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
-from django.utils.feedgenerator import Atom1Feed
 from django.utils.feedgenerator import DefaultFeed
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
@@ -23,6 +22,7 @@ from django.views.generic.list import ListView
 from homepagenews.homepagenews_editor import get_news_list_github
 from .models import MediaCard, Rubric, Settings, TorrentClient, TorrentTracker
 from .plugin_manager import dpt, get_m_cards_to_urls, async_manager_torrent
+from .utils.mganet_to_torrent import get_torrent_by_magnet
 from .utils.view_utils import message_or_print, download_torrents, get_cookies, uncheck_new_data_m_card, \
     get_m_card_set, create_new_uid, dw_update_m_cards, get_user_by_uid, sort_dw_tasks_m_cards
 
@@ -509,27 +509,27 @@ class CorrectMimeTypeFeed(DefaultFeed):
     content_type = 'application/xml; charset=utf-8'
 
 
-class LatestPostsFeed(Feed):
+class MCardsUPDFeed(Feed):
     title = "MediaCards"
     link = ''
     description = "MediaCards UPD"
-    feed_type = Atom1Feed
+
+    # feed_type = Atom1Feed
 
     def get_object(self, request, uid):
         user = get_user_by_uid(uid)
         return user, uid
-
 
     def items(self, user):
         if user[0]:
             m_cards = get_m_card_set(user=user[0]).filter(is_new_data=True)
             self.uid = user[1]
             return m_cards
-        # Не верно указан UID в URL
+        # В URL указан не верный UID
         return []
 
     def item_title(self, item):
-        return f'{item.short_name} | {item.date_upd}'
+        return f'{item.short_name} | {item.date_upd.strftime("%d.%m.%Y %H:%M:%S")}'
 
     def item_description(self, item):
         return item.full_name
@@ -539,13 +539,13 @@ class LatestPostsFeed(Feed):
         Takes an item, as returned by items(), and returns the item's
         pubdate.
         """
-        return item.published
+        return item.date_upd
 
     def item_guid(self, item):
         """
         Takes an item, as return by items(), and returns the item's ID.
         """
-        return f'{item.pk} | {item.date_upd}'
+        return f'{item.pk}/{item.date_upd.strftime("%d.%m.%Y %H:%M:%S")}'
 
     def item_updateddate(self, item):
         """
@@ -564,21 +564,21 @@ def get_torrent_file(request, m_card_id, uid):
 
     """
     user = get_user_by_uid(uid)
-    response = None
+    t_file = None
     if user:
         m_cards = MediaCard.objects.filter(id=m_card_id)
         m_card = m_cards.first()
         if m_card.author == user or m_card.is_view:
             stop_list_url, urls, magnet_urls = sort_dw_tasks_m_cards(m_cards, user, m_card_id)
             if urls:
-                torrent = asyncio.run(async_manager_torrent(urls))
-                response = HttpResponse(*torrent, content_type='application/x-bittorrent')
-                response['Content-Disposition'] = f'attachment; filename="{m_card.id}.torrent"'
+                t_file = asyncio.run(async_manager_torrent(urls))
             elif magnet_urls:
-                response = HttpResponse("", status=302)
-                response['Location'] = magnet_urls[0]
+                t_file = get_torrent_by_magnet(*magnet_urls)
+                print(t_file)
 
-        if response:
+        if t_file:
+            response = HttpResponse(*t_file, content_type='application/x-bittorrent')
+            response['Content-Disposition'] = f'attachment; filename="{m_card.id}.torrent"'
             # m_card.is_new_data = False
             # m_card.save()
             return response

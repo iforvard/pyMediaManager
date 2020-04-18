@@ -89,3 +89,9 @@ def login(login_user, password_user):
         cookies = session.cookies.get_dict()
         if 'bb_session' in cookies:
             return cookies
+
+
+if __name__ == '__main__':
+    url = 'http://127.0.0.1:8000/get_torrent/1/1:CvilTQA1BZBIRmzZpWlBXPHjrfZr7nYxof5Cx1mailURtVWI9M9pwztHZyfALyMm'
+    resp = requests.get(url)
+    parser(resp)
