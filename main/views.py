@@ -528,7 +528,7 @@ class MCardsUPDFeed(Feed):
         return []
 
     def item_title(self, item):
-        return f'{item.short_name} | {item.date_upd.strftime("%d.%m.%Y %H:%M:%S")}'
+        return f'[{item.plugin_name}] | {item.short_name} | {item.date_upd.strftime("%d.%m.%Y %H:%M:%S")}'
 
     def item_description(self, item):
         return item.full_name
