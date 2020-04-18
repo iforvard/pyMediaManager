@@ -574,7 +574,6 @@ def get_torrent_file(request, m_card_id, uid):
                 t_file = asyncio.run(async_manager_torrent(urls))
             elif magnet_urls:
                 t_file = get_torrent_by_magnet(*magnet_urls)
-                print(t_file)
 
         if t_file:
             response = HttpResponse(*t_file, content_type='application/x-bittorrent')
