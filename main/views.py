@@ -513,8 +513,7 @@ class MCardsUPDFeed(Feed):
     title = "MediaCards"
     link = ''
     description = "MediaCards UPD"
-
-    # feed_type = Atom1Feed
+    feed_type = CorrectMimeTypeFeed
 
     def get_object(self, request, uid):
         user = get_user_by_uid(uid)
@@ -547,12 +546,12 @@ class MCardsUPDFeed(Feed):
         """
         return f'{item.pk}/{item.date_upd.strftime("%d.%m.%Y %H:%M:%S")}'
 
-    def item_updateddate(self, item):
+    def item_updateddate(self):
         """
         Takes an item, as returned by items(), and returns the item's
         updateddate.
         """
-        return item.date_upd
+        return datetime.now()
 
     def item_link(self, item):
         return reverse('main:get_torrent', args=[item.pk, self.uid])
