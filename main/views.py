@@ -123,7 +123,7 @@ def download_m_cards(request, id_m_card='all'):
 @login_required
 def check_m_cards(request, key):
     if key == 'check':
-        m_cards = dw_update_m_cards(request)
+        m_cards = dw_update_m_cards(user=request.user)
     else:
         m_cards = get_m_card_set(request)
 
@@ -510,22 +510,21 @@ class CorrectMimeTypeFeed(DefaultFeed):
 
 
 class MCardsUPDFeed(Feed):
-    title = "MediaCards"
+    title = "Pymediamanager"
     link = ''
     description = "MediaCards UPD"
     feed_type = CorrectMimeTypeFeed
 
     def get_object(self, request, uid):
         user = get_user_by_uid(uid)
-        return user, uid
+        self.uid = uid
+        return user
 
     def items(self, user):
-        if user[0]:
-            m_cards = get_m_card_set(user=user[0]).filter(is_new_data=True)
-            self.uid = user[1]
-            return m_cards
-        # В URL указан не верный UID
-        return []
+        m_cards = []
+        if user:
+            m_cards = dw_update_m_cards(user=user).filter(is_new_data=True)
+        return m_cards
 
     def item_title(self, item):
         return f'[{item.plugin_name}] | {item.short_name} | {item.date_upd.strftime("%d.%m.%Y %H:%M:%S")}'

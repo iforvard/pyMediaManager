@@ -134,11 +134,13 @@ def create_new_uid(request):
     user_set.save()
 
 
-def dw_update_m_cards(request, m_cards=None):
+def dw_update_m_cards(request=None, m_cards=None, user=None):
+    if not user:
+        user = request.user
     if not m_cards:
-        m_cards = get_m_card_set(request)
+        m_cards = get_m_card_set(user=user)
     torrents = [m_card.url for m_card in m_cards]
-    cookies = get_cookies(request.user)
+    cookies = get_cookies(user)
     upd_m_cards = get_m_cards_to_urls(torrents, cookies)
 
     for m_card in m_cards:
