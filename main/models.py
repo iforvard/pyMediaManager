@@ -144,18 +144,11 @@ class TorrentClient(BaseModel):
 
 
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_or_update_user_profile(sender, instance, created, **kwargs):
     """
     При создании нового пользователя, у него создаются дефолтные настройки.
     """
     if created:
         settings = Settings.objects.create(user=instance)
         settings.uuid = f'{settings.id}:{get_random_string(64)}'
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    """
-    Сохранение настроек для ногвого пользователя.
-    """
     instance.settings.save()
