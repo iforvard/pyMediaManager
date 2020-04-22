@@ -1,6 +1,6 @@
 
 {% load bootstrap4 %}
-
+{% load static %}
 {% load i18n %}
 {% load account socialaccount %}
 
@@ -12,6 +12,7 @@
         pyMedia Manager</title>
     {% bootstrap_css %}
     {% bootstrap_javascript jquery='slim' %}
+     <link rel="stylesheet" type="text/css" href="{% static 'main/login.css' %}">
 </head>
 {% if messages %}
 
@@ -19,26 +20,27 @@
 
 {% endif %}
 {% block content %}
-<div class="container">
+<div class="container text-white">
+
   <div class="row">
     <div class="col">
 
 {% get_providers as socialaccount_providers %}
 
 {% if socialaccount_providers %}
-<p>{% blocktrans with site.name as site_name %}Please sign in with one
+<p class="text-white bg-dark">{% blocktrans with site.name as site_name %}Please sign in with one
 of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
 for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
 
-<div class="socialaccount_ballot">
+        <div class="socialaccount_ballot text-white bg-dark">
 
-  <ul class="socialaccount_providers">
-    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-  </ul>
+            <ul class="socialaccount_providers">
+                {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+            </ul>
 
-<!--  <div class="login-or">{% trans 'or' %}</div>-->
+            <!--  <div class="login-or">{% trans 'or' %}</div>-->
 
-</div>
+        </div>
 
 {% include "socialaccount/snippets/login_extra.html" %}
 
@@ -53,11 +55,12 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
-  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+  <a class="button secondaryAction text-white bg-dark" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
   <button class="primaryAction" type="submit">{% trans "Sign In" %}</button>
 </form>
 </div>
   </div>
-    <a href="{% url 'main:homepage' %}">Home page</a> | <a href="https://github.com/iforvard/pyMediaManager">Github</a>
+    <a class="text-white bg-dark" href="{% url 'main:homepage' %}">Home page</a> | <a class="text-white bg-dark"
+        href="https://github.com/iforvard/pyMediaManager">Github</a>
 </div>
 {% endblock %}

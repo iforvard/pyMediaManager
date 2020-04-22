@@ -1,0 +1,8 @@
+/* Custom page CSS
+-------------------------------------------------- */
+
+
+body {
+    background-image: url("/static/main/background.jpg");
+    background-size: cover;
+}
