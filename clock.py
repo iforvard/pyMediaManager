@@ -1,5 +1,6 @@
 import os
 import subprocess
+from datetime import datetime, timedelta
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -24,6 +25,8 @@ def timed_job():
     bashCommand = "python3 manage.py check_torrents iforvard"
     subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     print(f'Выполненна команда {bashCommand}')
+    sched_next_time = datetime.now() + timedelta(minutes=sched_time_min)
+    print(f'Следущуая итерация через {sched_time_min} минут, в {sched_next_time}')
 
 
 sched.start()
