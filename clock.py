@@ -4,7 +4,7 @@ import subprocess
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 sched_time_sec = os.environ.get('SCHED_TIME_SEC', 1)
-sched_time_min = os.environ.get('SCHED_TIME_MIN', 180)
+sched_time_min = int(os.environ.get('SCHED_TIME_MIN', 180))
 sched_time_hour = os.environ.get('SCHED_TIME_HOUR', 1)
 sched = BlockingScheduler()
 
