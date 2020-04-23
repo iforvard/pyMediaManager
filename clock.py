@@ -6,7 +6,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 sched_time_sec = os.environ.get('SCHED_TIME_SEC', 1)
 sched_time_min = float(os.environ.get('SCHED_TIME_MIN', 180))
-sched_time_hour = os.environ.get('SCHED_TIME_HOUR', 1)
+sched_time_hour = float(os.environ.get('SCHED_TIME_HOUR', 3))
 sched = BlockingScheduler()
 
 
@@ -16,8 +16,8 @@ sched = BlockingScheduler()
 @sched.scheduled_job(
     'interval',
     # seconds=sched_time_sec,
-    minutes=sched_time_min,
-    # hours=sched_time_hour,
+    # minutes=sched_time_min,
+    hours=sched_time_hour,
 )
 def timed_job():
     # iforvard - нужно заменить на логин пользователя в системе,
