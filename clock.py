@@ -25,7 +25,7 @@ def timed_job():
     bashCommand = "python3 manage.py check_torrents iforvard"
     subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     print(f'Выполненна команда {bashCommand}')
-    sched_next_time = datetime.now() + timedelta(minutes=sched_time_hour)
+    sched_next_time = datetime.now() + timedelta(hours=sched_time_hour)
     print(f'Следущуая итерация через {sched_time_hour} час(а), в {sched_next_time}')
 
 
