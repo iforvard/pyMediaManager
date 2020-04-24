@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-sched_time_sec = os.environ.get('SCHED_TIME_SEC', 1)
-sched_time_min = float(os.environ.get('SCHED_TIME_MIN', 60))
+sched_time_sec = float(os.environ.get('SCHED_TIME_SEC', 1))
+sched_time_min = float(os.environ.get('SCHED_TIME_MIN', 59))
 sched_time_hour = float(os.environ.get('SCHED_TIME_HOUR', 3))
 sched = BlockingScheduler()
 

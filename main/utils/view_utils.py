@@ -60,14 +60,16 @@ def sort_dw_tasks_m_cards(m_cards, user, id_m_card):
 
 
 # @timeout(10)
-def download_torrents(request, id_m_card):
-    m_cards, settings = get_m_card_set(request, get_settings=True)
-    stop_list_url, urls, magnet_urls = sort_dw_tasks_m_cards(m_cards, request.user, id_m_card)
+def download_torrents(request=None, id_m_card=None, user=None):
+    if not user:
+        user = request.user
+    m_cards, settings = get_m_card_set(user=user, get_settings=True)
+    stop_list_url, urls, magnet_urls = sort_dw_tasks_m_cards(m_cards, user, id_m_card)
 
     if not settings.t_client:
         return False, False
     else:
-        client = TorrentClient.objects.get(name=settings.t_client, user=request.user)
+        client = TorrentClient.objects.get(name=settings.t_client, user=user)
         host = f'{client.host}:{client.port}'
         login = client.login
         password = client.password
