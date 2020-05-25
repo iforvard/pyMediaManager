@@ -60,9 +60,7 @@ def sort_dw_tasks_m_cards(m_cards, user, id_m_card):
 
 
 # @timeout(10)
-def download_torrents(request=None, id_m_card=None, user=None):
-    if not user:
-        user = request.user
+def download_torrents(id_m_card=None, user=None):
     m_cards, settings = get_m_card_set(user=user, get_settings=True)
     stop_list_url, urls, magnet_urls = sort_dw_tasks_m_cards(m_cards, user, id_m_card)
 

@@ -3,18 +3,8 @@ import asyncio
 from magnet2torrent import Magnet2Torrent, FailedToFetchException
 
 
-class M2T(Magnet2Torrent):
-    def _parse_url(self):
-        infohash, trackers, name = super(M2T, self)._parse_url()
-        try:
-            name = name.decode()
-        except AttributeError:
-            pass
-        return infohash, trackers, name
-
-
 async def fetch_that_torrent(magnet_url):
-    m2t = M2T(magnet_url, use_additional_trackers=True)
+    m2t = Magnet2Torrent(magnet_url, use_additional_trackers=True)
     try:
         torrent = await m2t.retrieve_torrent()
         return torrent
