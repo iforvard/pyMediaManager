@@ -27,7 +27,7 @@ httpx==0.12.1
 hyperframe==5.2.0
 idna==2.9
 kinopoiskpy==0.8.2
-lxml==4.5.0
+lxml==4.6.2
 magnet2torrent==1.1.0
 multidict==4.7.5
 multiprocess==0.70.9
