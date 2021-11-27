@@ -42,7 +42,7 @@ qbittorrent-api
 regex
 requests
 requests-oauthlib
-rfc398
+rfc3986
 simplejson
 six
 sniffio
