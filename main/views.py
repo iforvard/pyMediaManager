@@ -298,7 +298,7 @@ class RubricDeleteView(LoginRequiredMixin, DeleteView):
     fields = ('name',)
 
     def test_func(self):
-        return self.get_object().name not in ("Архив", "Archive")
+        return False
 
     def handle_no_permission(self):
         messages.add_message(
