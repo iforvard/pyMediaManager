@@ -304,7 +304,7 @@ class RubricDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def handle_no_permission(self):
         messages.add_message(
             self.request, messages.ERROR,
-            f'Нельзя удалить теги "Архив" и "Archive" - {self.get_object().author}.'
+            f'Нельзя удалить теги "Архив" и "Archive"'
         )
         return redirect('main:index')
 
