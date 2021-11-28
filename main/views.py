@@ -292,21 +292,21 @@ class RubricUpdateView(LoginRequiredMixin, UpdateView):
         return f'{reverse("main:profile", args=(self.request.user,))}#rubrics'
 
 
-class RubricDeleteView(LoginRequiredMixin, DeleteView):
+class RubricDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     context_object_name = 'Rubric'
     template_name = 'main/delete_rubric.html'
     model = Rubric
     fields = ('name',)
 
-    def get_object(self, queryset):
-        obj = super(RubricDeleteView, self).get_object(queryset)
-        if obj.name not in ("Архив", "Archive"):
-            return obj
+    def test_func(self):
+        return self.get_object().name not in ("Архив", "Archive")
+
+    def handle_no_permission(self):
         messages.add_message(
             self.request, messages.ERROR,
-            f'Нельзя удалить теги "Архив" и "Archive"'
+            f'Нельзя удалить теги "Архив" и "Archive" - {self.get_object().author}.'
         )
-        return redirect('main:profile', username=self.request.user)
+        return redirect('main:profile', args=(self.request.user,))
 
     def get_success_url(self, **kwargs):
         return f'{reverse("main:profile", args=(self.request.user,))}#rubrics'
