@@ -26,7 +26,6 @@ hstspreload
 httpx
 hyperframe
 idna
-kinopoiskpy
 lxml
 magnet2torrent
 multidict
