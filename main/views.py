@@ -306,7 +306,7 @@ class RubricDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             self.request, messages.ERROR,
             f'Нельзя удалить теги "Архив" и "Archive"'
         )
-        return redirect(f'{reverse("main:profile", args=(self.request.user,))}#rubrics')
+        return redirect('main:profile', username=self.request.user)
 
     def get_success_url(self, **kwargs):
         return f'{reverse("main:profile", args=(self.request.user,))}#rubrics'
