@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.syndication.views import Feed
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
@@ -297,15 +298,11 @@ class RubricDeleteView(LoginRequiredMixin, DeleteView):
     model = Rubric
     fields = ('name',)
 
-    def test_func(self):
-        return False
-
-    def handle_no_permission(self):
-        messages.add_message(
-            self.request, messages.ERROR,
-            f'Нельзя удалить теги "Архив" и "Archive"'
-        )
-        return redirect('main:index')
+    def get_object(self, queryset):
+        obj = super(RubricDeleteView, self).get_object(queryset)
+        if obj.name not in ("Архив", "Archive"):
+            return obj
+        raise PermissionDenied
 
     def get_success_url(self, **kwargs):
         return f'{reverse("main:profile", args=(self.request.user,))}#rubrics'
