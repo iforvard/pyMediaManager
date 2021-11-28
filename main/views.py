@@ -302,7 +302,11 @@ class RubricDeleteView(LoginRequiredMixin, DeleteView):
         obj = super(RubricDeleteView, self).get_object(queryset)
         if obj.name not in ("Архив", "Archive"):
             return obj
-        raise PermissionDenied
+        messages.add_message(
+            self.request, messages.ERROR,
+            f'Нельзя удалить теги "Архив" и "Archive"'
+        )
+        return redirect('main:profile', username=self.request.user)
 
     def get_success_url(self, **kwargs):
         return f'{reverse("main:profile", args=(self.request.user,))}#rubrics'
