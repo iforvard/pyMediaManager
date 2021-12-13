@@ -21,7 +21,7 @@ django-pagination-bootstrap==2.4.4
 expiringdict==1.2.1
 frozenlist==1.2.0
 idna==3.3
-lxml==4.6.4
+lxml==4.6.5
 magnet2torrent==1.1.1
 multidict==4.7.6
 oauthlib==3.1.1
