@@ -35,7 +35,7 @@ class Command(BaseCommand):
             nargs='?',
             type=str,
             default=None,
-            help='Логин пользователя pyMediaManager - обазательный аргумент'
+            help='Логин пользователя pyMediaManager - обязательный аргумент'
         )
 
         parser.add_argument(
