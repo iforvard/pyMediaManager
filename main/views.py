@@ -156,7 +156,7 @@ def add_torrent(request):
         request,
         messages.ERROR,
         mark_safe(
-            f"Плагины не смогли распознать ссылку &#x1F614;.<br>"
+            f"Плагины не смогли распознать вашу ссылку &#x1F614;.<br>"
             f'Список подключенных плагинов: {", ".join([plugin for plugin in dpt])}.<br><br>'
             f'<p><a href="/homepage/">&#128073; Инструкция</a></p>'
         ),
