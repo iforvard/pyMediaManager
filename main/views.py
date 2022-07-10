@@ -16,6 +16,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.feedgenerator import DefaultFeed
+from django.utils.safestring import mark_safe
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.list import ListView
@@ -134,28 +135,34 @@ def check_m_cards(request, key):
 
 @login_required
 def add_torrent(request):
-    id_torrent = request.GET.get('id_torrent', '')
+    id_torrent = request.GET.get("id_torrent", "")
     m_card = get_m_cards_to_urls([id_torrent], get_cookies(request.user))
     if m_card:
         m_card = m_card[id_torrent]
         media_card = MediaCard.objects.create(
-            full_name=m_card['full_name'],
-            short_name=m_card['short_name'],
-            size=m_card['size'],
-            date_upd=m_card['date_upd'],
-            img_url=m_card['img_url'],
-            magnet_url=m_card['magnet_url'],
-            torrent_url=m_card['torrent_url'],
-            url=m_card['url'],
-            plugin_name=m_card['plugin_name'],
+            full_name=m_card["full_name"],
+            short_name=m_card["short_name"],
+            size=m_card["size"],
+            date_upd=m_card["date_upd"],
+            img_url=m_card["img_url"],
+            magnet_url=m_card["magnet_url"],
+            torrent_url=m_card["torrent_url"],
+            url=m_card["url"],
+            plugin_name=m_card["plugin_name"],
             author=request.user,
         )
-        return redirect('main:detail', pk=media_card.pk)
+        return redirect("main:detail", pk=media_card.pk)
     messages.add_message(
-        request, messages.ERROR,
-        f'Плагины не смогли распознать ссылку. Список подключенных плагинов: {", ".join([plugin for plugin in dpt])}'
+        request,
+        messages.ERROR,
+        mark_safe(
+            f"Плагины не смогли распознать ссылку &#x1F614;.<br>"
+            f'Список подключенных плагинов: {", ".join([plugin for plugin in dpt])}.<br><br>'
+            f'<p><a href="/homepage/">&#128073; Инструкция</a></p>'
+        ),
     )
-    return redirect('main:index')
+    return redirect("main:index")
+
 
 
 class IndexMediaCardView(LoginRequiredMixin, ListView):
