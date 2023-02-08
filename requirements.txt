@@ -9,7 +9,7 @@ certifi==2021.10.8
 cffi==1.15.0
 chardet==3.0.4
 charset-normalizer==2.0.8
-cryptography==36.0.0
+cryptography==39.0.1
 dateparser==1.1.0
 defusedxml==0.7.1
 dj-config-url==0.1.1
